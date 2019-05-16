@@ -43,7 +43,7 @@ c:/directorio/backup/
 
 - *aws s3 sync: Verifica si uno o más ficheros y/o directorios locales existentes se han actualizado comprobando su nombre, tamaño y el timestamp (marca de tiempo). Actualmente no creo que compruebe los cambios en los hashes del fichero.*
 
-- *Se usará el cmdlet "Send-MailMessage" por defecto de PowerShell para el envío del Email*
+- *Se usará el cmdlet "Send-MailMessage" por defecto de PowerShell para el envío de Emails*
 
 ### Envío log cuenta Gmail (Google)
 Para el envío del log vía Gmail es necesario activar el acceso a "Aplicaciones menos seguras" en la cuenta Google. Por seguridad, se debería crear una cuenta específica para esta finalidad.
