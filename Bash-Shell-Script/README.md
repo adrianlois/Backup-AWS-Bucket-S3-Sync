@@ -35,7 +35,7 @@ Default output format [None]: json
 
 - *aws s3 sync: Verifica si uno o más ficheros y/o directorios locales existentes se han actualizado comprobando su nombre, tamaño y el timestamp (marca de tiempo). Actualmente no creo que compruebe los cambios en los hashes del fichero.*
 
-- *Se usará el comando "mail" por defecto de Linux para el envío del Email*
+- *Se usará el comando "mail" por defecto de Linux para el envío de Emails*
 
  ## Instalación y configuración de SSMTP para el envío de emails usando el comando mail
  
