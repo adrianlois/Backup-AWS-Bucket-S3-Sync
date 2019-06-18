@@ -50,3 +50,10 @@ Para el envío del log vía Gmail es necesario activar el acceso a "Aplicaciones
 https://myaccount.google.com/lesssecureapps
 
 ![Aplicaciones menos seguras Google](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-bucket-S3-Bash-PowerShell/master/screenshots/ejecucion_app_menos_seguras_gmail.png)
+
+### Llamada a fichero PowerShell .ps1 desde un fichero de proceso por lotes .bat
+Si queremos crear una tarea programada en Windows (taskschd.msc) para la ejecución automatizada de backups a AWS S3. La forma más efectiva sería establecer directamente un fichero de proceso por lotes .bat y que este llame al fichero PowerShell .ps1.
+
+**llamada-ps1-backup-aws-S3.bat**: Establecer el path donde se encuentra el fichero ps1
+
+- pathLocalPs1="pathLocalFichero.ps1"
