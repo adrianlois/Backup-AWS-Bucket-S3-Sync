@@ -41,7 +41,7 @@ c:/directorio/backup/
 
 - *--delete: Elimina los ficheros/directorios en el bucket S3 (pathRemoto) que ya no existan en el origen (pathLocal).*
 
-- *--sse AES256: Especifica un cifrado AES256 del lado del servidor para los objetos S3.*
+- *--sse AES256: (Server Side Encryption) Especifica un cifrado AES256 del lado del servidor para los objetos S3.*
 
 - *aws s3 sync: Verifica si uno o más ficheros y/o directorios locales existentes se han actualizado comprobando su nombre, tamaño y el timestamp (marca de tiempo). Actualmente no creo que compruebe los cambios en los hashes del fichero.*
 
