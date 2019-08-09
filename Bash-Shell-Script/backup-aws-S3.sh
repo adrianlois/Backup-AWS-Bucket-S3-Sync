@@ -39,4 +39,3 @@ echo "El backup finaliza: $fechaHoraActual" >> $backuplog
 
 # Envío del fichero log adjunto vía Email usando el comando mail.
 echo "$cuerpoEmail - $fechaHoraActual" | mail -s "$asuntoEmail" "$envioEmailCuentaUsuario" -A "$backuplog"
-
