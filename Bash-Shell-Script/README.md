@@ -33,6 +33,8 @@ Default output format [None]: json
 
 - *--delete: Elimina los ficheros/directorios en el bucket S3 (pathRemoto) que ya no existan en el origen (pathLocal).*
 
+- *--sse AES256: Especifica cifrado AES256 del lado del servidor del objeto S3.*
+
 - *aws s3 sync: Verifica si uno o más ficheros y/o directorios locales existentes se han actualizado comprobando su nombre, tamaño y el timestamp (marca de tiempo). Actualmente no creo que compruebe los cambios en los hashes del fichero.*
 
 - *Se usará el comando "mail" por defecto de Linux para el envío de Emails*
