@@ -27,7 +27,7 @@ Default output format [None]: json
 - $usuarioEmail = "usuarioEmail@gmail.com" 
 - $passwdEmail = "passwdEmail"
 - $asuntoEmail = "asuntoEmail"
-- $cuerpoEmail = "cuerpoEmail"
+- $cuerpoEmail = Será el contenido del fichero de log adjunto en el envío del email.
 
 **_Detalles a tener en cuenta_**
 
