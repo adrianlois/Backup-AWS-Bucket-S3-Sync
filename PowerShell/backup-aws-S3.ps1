@@ -33,7 +33,7 @@ Write-Output "# # # # # # # # # # # # # # # # # # # # #`n" >> $backupLog
 # Sincronizar datos locales a bucket S3 de AWS
 aws s3 sync $pathLocalDatos $pathRemotoBucketS3 --sse AES256 --delete --include "*" >> $backupLog
 
-Write-Output "# # # # # # # # # # # # # # # # # # # # #" >> $backupLog
+Write-Output "`n# # # # # # # # # # # # # # # # # # # # #" >> $backupLog
 # Mostrar fecha y hora de la finalización del proceso de backup al final del log
 # Resetear la variable $fechaHoraActual para obtener la hora actual hasta este momento del proceso de backup
 $fechaHoraActual = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
