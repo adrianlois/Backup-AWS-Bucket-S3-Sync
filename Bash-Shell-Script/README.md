@@ -27,7 +27,9 @@ Default output format [None]: json
 - pathRemotoBucketS3="s3://bucketS3/backup/"
 - envioEmailCuentaUsuario="emailCuentaUsuario@gmail.com"
 - asuntoEmail="asuntoEmail"
-- cuerpoEmail = Será el contenido del fichero de log adjunto en el envío del email.
+- cuerpoEmail ="cuerpoEmail"
+
+Podemos elegir entre enviar el fichero de log adjunto o adjuntar el contenido del fichero de log en el cuerpo del mail.
 
 **_Detalles a tener en cuenta_**
 
