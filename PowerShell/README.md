@@ -53,6 +53,8 @@ https://myaccount.google.com/lesssecureapps
 
 ![Aplicaciones menos seguras Google](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-bucket-S3-Bash-PowerShell/master/screenshots/ejecucion_app_menos_seguras_gmail.png)
 
+![Envio Email Log Gmail Powershell](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-bucket-S3-Bash-PowerShell/master/screenshots/envio_email_backup_log_gmail_powershell.png)
+
 ### Llamada a fichero PowerShell .ps1 desde un fichero de proceso por lotes .bat
 Si queremos crear una tarea programada en Windows (taskschd.msc) para la ejecución automatizada de backups a AWS S3. La forma más efectiva sería establecer directamente un fichero de proceso por lotes .bat y que este llame al fichero PowerShell .ps1.
 
