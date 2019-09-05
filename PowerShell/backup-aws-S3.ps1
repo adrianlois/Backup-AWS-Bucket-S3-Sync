@@ -10,7 +10,6 @@ $fechaActual = Get-Date -uformat "%d-%m-%Y"
 $usuarioEmail = "usuarioEmail@gmail.com" 
 $passwdEmail = "passwdEmail"
 $asuntoEmail = "asuntoEmail"
-$cuerpoEmail = "cuerpoEmail"
 
 # Convertir password a un string seguro
 $secPasswdEmail = ConvertTo-SecureString $passwdEmail -AsPlainText -Force
@@ -40,6 +39,9 @@ Write-Output "# # # # # # # # # # # # # # # # # # # # #" >> $backupLog
 $fechaHoraActual = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
 Write-Output "El backup finaliza: $fechaHoraActual" >> $backupLog
 
+# Body Email
+$cuerpoEmail = [system.io.file]::ReadAllText($backuplog)
+
 # Envío del fichero log adjunto vía Email usando Gmail.
-Send-MailMessage -From $usuarioEmail -To $usuarioEmail -Subject "$asuntoEmail - $fechaHoraActual" -Body "$cuerpoEmail - $fechaHoraActual" -Attachments "$backupLog" -SmtpServer smtp.gmail.com -UseSsl -Credential $credencialesEmail
+Send-MailMessage -From $usuarioEmail -To $usuarioEmail -Subject "$asuntoEmail - $fechaHoraActual" -Body "$cuerpoEmail" -Attachments "$backupLog" -SmtpServer smtp.gmail.com -UseSsl -Credential $credencialesEmail
 exit
