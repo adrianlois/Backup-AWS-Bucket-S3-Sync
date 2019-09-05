@@ -42,6 +42,10 @@ Write-Output "El backup finaliza: $fechaHoraActual" >> $backupLog
 # Body Email
 $cuerpoEmail = [system.io.file]::ReadAllText($backuplog)
 
+# Alternativas usando Get-Content
+# $cuerpoEmail = Get-Content "$backupLog" | Out-String
+# $cuerpoEmail = Get-Content "$backupLog" -Raw
+
 # Envío del fichero log adjunto vía Email usando Gmail.
 Send-MailMessage -From $usuarioEmail -To $usuarioEmail -Subject "$asuntoEmail - $fechaHoraActual" -Body "$cuerpoEmail" -Attachments "$backupLog" -SmtpServer smtp.gmail.com -UseSsl -Credential $credencialesEmail
 exit
