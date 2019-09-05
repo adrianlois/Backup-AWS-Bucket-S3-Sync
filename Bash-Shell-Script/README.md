@@ -48,10 +48,10 @@ apt install -y ssmtp mailutils
 ```
 Editar el fichero **/etc/ssmtp/ssmtp.conf**: establecer los valores deseados para los siguientes parámetros.
 
-- root=usuarioEmail
-- hostname=hostname
-- AuthUser=passwdEmail
-- AuthPass=usuarioEmail
+- root=EMAIL_GMAIL
+- hostname=HOSTNAME
+- AuthUser=EMAIL_GMAIL
+- AuthPass=PASSWORD_GMAIL
 
 ### Desactivar el envío de alertas de correo de cron
 
