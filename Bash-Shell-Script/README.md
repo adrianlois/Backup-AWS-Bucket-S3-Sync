@@ -21,7 +21,7 @@ Default region name [None]: us-west-2
 Default output format [None]: json
 ```
 
-#### **backup-aws-S3.sh**: establecer los valores deseados en las variables
+#### **backup-aws-S3.sh**: establecer los valores deseados en las variables.
 
 - pathLocalDatos="/pathLocal/datos/"
 - pathRemotoBucketS3="s3://bucketS3/backup/"
@@ -41,19 +41,21 @@ Default output format [None]: json
 
  ## Instalación y configuración de SSMTP para el envío de emails usando el comando mail
  
-**Instalar SSMTP Sendmail**
+**Instalar ssmtp sendmail y mailutils**
 ```
 apt update -y
-apt install -y ssmtp
+apt install -y ssmtp mailutils
 ```
-Editar el fichero **/etc/ssmtp/ssmtp.conf**: establecer los valores deseados para los siguientes parámetros
+Editar el fichero **/etc/ssmtp/ssmtp.conf**: establecer los valores deseados para los siguientes parámetros.
 
+- root=usuarioEmail
+- hostname=hostname
 - AuthUser=passwdEmail
 - AuthPass=usuarioEmail
 
 ### Desactivar el envío de alertas de correo de cron
 
-Por defecto todos los emails se enviarán a la cuenta local del usuario que ejecuta el cron
+Por defecto todos los emails se enviarán a la cuenta local del usuario que ejecuta el cron.
 
 - Añadir al final de cada línea en la que tengamos una tarea programada, una redirección a /dev/null descartando así su salida.
 ```
