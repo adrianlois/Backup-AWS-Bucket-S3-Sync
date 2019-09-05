@@ -40,7 +40,8 @@ $fechaHoraActual = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
 Write-Output "El backup finaliza: $fechaHoraActual" >> $backupLog
 
 # Body Email
-$cuerpoEmail = [system.io.file]::ReadAllText($backuplog)
+$cuerpoEmail = [system.io.file]::ReadAllText($backupLog)
+
 # Alternativas usando Get-Content
 # $cuerpoEmail = Get-Content "$backupLog" | Out-String
 # $cuerpoEmail = Get-Content "$backupLog" -Raw
