@@ -37,9 +37,10 @@ echo -e "\n# # # # # # # # # # # # # # # # # # # # #" >> $backupLog
 fechaHoraActual="$(date +'%d/%m/%Y - %H:%M:%S')"
 echo "El backup finaliza: $fechaHoraActual" >> $backupLog
 
-# Elegir una opción de envío
+# Elegir una opción de envío (a o b)
 
 # a) Envío del fichero log adjunto vía Email usando el comando mail.
 echo "$cuerpoEmail" | mail -s "$asuntoEmail" "$envioEmailCuentaUsuario" -A "$backupLog"
+
 # b) Envío del contenido del fichero log en el cuerpo del Email usando el comando mail.
 cat "$backupLog" | mail -s "$asuntoEmail" "$envioEmailCuentaUsuario"
