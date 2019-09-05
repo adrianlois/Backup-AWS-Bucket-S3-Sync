@@ -27,7 +27,9 @@ Default output format [None]: json
 - $usuarioEmail = "usuarioEmail@gmail.com" 
 - $passwdEmail = "passwdEmail"
 - $asuntoEmail = "asuntoEmail"
-- $cuerpoEmail = Será el contenido del fichero de log adjunto en el envío del mail. (En el script "backup-aws-S3.ps1" se pueden ver varias alternativas con el cmdlet *Get-Content* y el namespace *System.io* usando el método *File.ReadAllText* esto hará que el texto adjunto en el cuerpo del mail se visualice de igual forma que fichero de log origen, respetando los saltos de línea).
+- $cuerpoEmail = Será el contenido del fichero de log adjunto en el envío del mail. 
+
+En el script "backup-aws-S3.ps1" se pueden ver varias alternativas con el cmdlet *Get-Content* y el namespace *System.io* usando el método *File.ReadAllText* esto hará que el texto adjunto en el cuerpo del mail se visualice de igual forma que fichero de log origen, respetando los saltos de línea.
 
 **_Detalles a tener en cuenta_**
 
