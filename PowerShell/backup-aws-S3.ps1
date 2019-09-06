@@ -27,17 +27,17 @@ if (Test-Path "*backup*.log") {
     }
 
 # Mostrar fecha y hora del comienzo del proceso de backup al princpio del log
-Write-Output "El backup comienza: $fechaHoraActual" > $backupLog
-Write-Output "# # # # # # # # # # # # # # # # # # # # #`n" >> $backupLog
+Write-Output "Backup comienza: $fechaHoraActual" > $backupLog
+Write-Output "# # # # # # # # # # # # # # # # # # # #`n" >> $backupLog
 
 # Sincronizar datos locales a bucket S3 de AWS
 aws s3 sync $pathLocalDatos $pathRemotoBucketS3 --sse AES256 --delete --include "*" >> $backupLog
 
-Write-Output "`n# # # # # # # # # # # # # # # # # # # # #" >> $backupLog
+Write-Output "`n# # # # # # # # # # # # # # # # # # # #" >> $backupLog
 # Mostrar fecha y hora de la finalización del proceso de backup al final del log
 # Resetear la variable $fechaHoraActual para obtener la hora actual hasta este momento del proceso de backup
 $fechaHoraActual = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
-Write-Output "El backup finaliza: $fechaHoraActual" >> $backupLog
+Write-Output "Backup finaliza: $fechaHoraActual" >> $backupLog
 
 # Body Email
 $cuerpoEmail = [system.io.file]::ReadAllText($backupLog)
