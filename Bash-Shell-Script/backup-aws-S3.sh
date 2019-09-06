@@ -25,7 +25,7 @@ then
 fi
 
 # Mostrar fecha y hora del comienzo del proceso de backup al princpio del log
-echo "El backup comienza: $fechaHoraActual" > $backupLog
+echo "Backup comienza: $fechaHoraActual" > $backupLog
 echo -e "# # # # # # # # # # # # # # # # # # # # #\n" >> $backupLog
 
 # Sincronizar datos locales a bucket S3 de AWS
@@ -35,7 +35,7 @@ echo -e "\n# # # # # # # # # # # # # # # # # # # # #" >> $backupLog
 # Mostrar fecha y hora de la finalización del proceso de backup al final del log
 # Resetear la variable fechaHoraActual para obtener la hora actual hasta este momento del proceso de backup
 fechaHoraActual="$(date +'%d/%m/%Y - %H:%M:%S')"
-echo "El backup finaliza: $fechaHoraActual" >> $backupLog
+echo "Backup finaliza: $fechaHoraActual" >> $backupLog
 
 # Elegir una opción de envío (a o b)
 
