@@ -6,7 +6,7 @@ Backups en Bash Shell Script Linux y PowerShell Windows - Sincronizar datos loca
 - Instalación y configuración de AWSCLI Linux
 - Modificación de variables del bash script *backup-aws-S3.sh*
 - Instalación y configuración de SSMTP
-- Desactivar alertas automáticas de cron y programar tarea de ejecución de un script sh.
+- Desactivar alertas automáticas de cron y programar tarea de ejecución de un script sh
 - Envío del fichero de log a una cuenta Gmail
 
 ## PowerShell (Windows)
