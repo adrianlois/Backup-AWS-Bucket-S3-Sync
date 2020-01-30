@@ -41,6 +41,8 @@ Podemos elegir entre enviar el fichero de log adjunto o adjuntar el contenido de
 
 - *Se usará el comando "mail" por defecto de Linux para el envío de Emails*
 
+- Ayuda comando aws s3 sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
+
  ## Instalación y configuración de SSMTP para el envío de emails usando el comando mail
  
 **Instalar ssmtp sendmail y mailutils**
