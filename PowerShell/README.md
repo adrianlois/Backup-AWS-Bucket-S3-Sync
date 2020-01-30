@@ -49,6 +49,8 @@ c:/directorio/backup/
 
 - *Se usará el cmdlet "Send-MailMessage" de PowerShell para el envío de Emails*
 
+- Ayuda comando aws s3 sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
+
 ### Envío log cuenta Gmail (Google)
 Para el envío del log vía Gmail es necesario activar el acceso a "Aplicaciones menos seguras" en la cuenta Google. Por seguridad, se debería crear una cuenta específica para esta finalidad.
 https://myaccount.google.com/lesssecureapps
