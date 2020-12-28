@@ -31,7 +31,7 @@ Default output format [None]: json
 
 En el script *"backup-aws-S3.ps1"* se pueden ver varias alternativas con el cmdlet *Get-Content* y el namespace *System.io* usando el método *File.ReadAllText* esto hará que el texto adjunto en el cuerpo del mail se visualice de igual forma que fichero de log origen, respetando los saltos de línea.
 
-#### **Prerrequisito: Crear una password cifrada y almacenarla en fichero externo al script ps1**
+#### **Prerrequisito: Crear un fichero con la password cifrada**
 
 Una forma de evitar escribir una password en texto plano en un script ps1, es generar un fichero que contendrá el hash AES256 correspondiente a la string de la password cifrada. 
 
