@@ -1,13 +1,12 @@
 #####################
 # Autor @adrianlois_
 #####################
+# Crear password cifrada en un fichero
+# "MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\backup-aws-s3.pass"
 
 # Fecha y Hora
 $fechaHoraActual = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
 $fechaActual = Get-Date -uformat "%d-%m-%Y"
-
-# Crear password cifrada en un fichero
-# "MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\backup-aws-s3.pass"
 
 # Email
 $usuarioEmail = "usuarioEmail@gmail.com" 
