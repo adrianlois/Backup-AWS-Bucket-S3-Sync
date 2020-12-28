@@ -6,13 +6,16 @@
 $fechaHoraActual = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
 $fechaActual = Get-Date -uformat "%d-%m-%Y"
 
+# Crear password cifrada en un fichero
+# "MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\backup-aws-s3.pass"
+
 # Email
 $usuarioEmail = "usuarioEmail@gmail.com" 
-$passwdEmail = "passwdEmail"
+$passwdEmailFile = "C:\PATH\backup-aws-s3.pass"
 $asuntoEmail = "asuntoEmail"
 
-# Convertir password a un string seguro
-$secPasswdEmail = ConvertTo-SecureString $passwdEmail -AsPlainText -Force
+# Obtener password cifrada del fichero y establecer credenciales
+$secPasswdEmail = Get-Content $passwdEmailFile | ConvertTo-SecureString
 $credencialesEmail = New-Object System.Management.Automation.PSCredential ($usuarioEmail, $secPasswdEMail)
 
 # Paths
