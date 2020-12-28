@@ -25,13 +25,23 @@ Default output format [None]: json
 - $pathLocalDatos = "C:\\\pathLocal\\\datos\\\\"
 - $pathRemotoBucketS3 = "s3://bucketS3/backup/"
 - $usuarioEmail = "usuarioEmail@gmail.com" 
-- $passwdEmail = "passwdEmail"
+- $passwdEmailFile = "Path_Fichero_Password"
 - $asuntoEmail = "asuntoEmail"
 - $cuerpoEmail = Será el contenido del fichero de log adjunto en el envío del mail. 
 
 En el script *"backup-aws-S3.ps1"* se pueden ver varias alternativas con el cmdlet *Get-Content* y el namespace *System.io* usando el método *File.ReadAllText* esto hará que el texto adjunto en el cuerpo del mail se visualice de igual forma que fichero de log origen, respetando los saltos de línea.
 
-**_Detalles a tener en cuenta_**
+#### **Prerrequisito: Crear una password cifrada y almacenarla en fichero externo al script ps1**
+
+Una forma de evitar escribir una password en texto plano en un script ps1, es generar un fichero que contendrá el hash AES256 correspondiente a la string de la password cifrada. 
+
+En la variable anterior *$passwdEmailFile* se indicará el path donde se almacene dicho fichero.
+
+```
+"MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\backup-aws-s3.pass"
+```
+
+**_Aclaraciones_**
 
 - *Para paths de Windows es necesario establecer un doble slash invertido para separar los directorios "\\\\" , un único slash invertido "\\" se interpretaría como carácter de escape en aws-cli. Windows también admite paths separados con un único slash no invertido "/".*
 
