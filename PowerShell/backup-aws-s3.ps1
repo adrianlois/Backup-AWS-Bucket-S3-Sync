@@ -14,7 +14,7 @@ $passwdEmailFile = "C:\PATH\backup-aws-s3.pass"
 $asuntoEmail = "asuntoEmail"
 
 # Obtener password cifrada del fichero y establecer credenciales
-$secPasswdEmail = Get-Content $passwdEmailFile | ConvertTo-SecureString
+$secPasswdEmail = Get-Content -Path $passwdEmailFile | ConvertTo-SecureString
 $credencialesEmail = New-Object System.Management.Automation.PSCredential ($usuarioEmail, $secPasswdEmail)
 
 # Paths
@@ -45,8 +45,8 @@ Write-Output "Backup finaliza: $fechaHoraActual" >> $backupLog
 $cuerpoEmail = [system.io.file]::ReadAllText($backupLog)
 
 # Alternativas usando Get-Content
-# $cuerpoEmail = Get-Content "$backupLog" | Out-String
-# $cuerpoEmail = Get-Content "$backupLog" -Raw
+# $cuerpoEmail = Get-Content -Path "$backupLog" | Out-String
+# $cuerpoEmail = Get-Content -Path "$backupLog" -Raw
 
 # Envío del fichero log adjunto vía Email usando Gmail.
 Send-MailMessage -From $usuarioEmail -To $usuarioEmail -Subject "$asuntoEmail - $fechaHoraActual" -Body "$cuerpoEmail" -Attachments "$backupLog" -SmtpServer smtp.gmail.com -UseSsl -Credential $credencialesEmail
