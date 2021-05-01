@@ -15,7 +15,7 @@ $asuntoEmail = "asuntoEmail"
 
 # Obtener password cifrada del fichero y establecer credenciales
 $secPasswdEmail = Get-Content $passwdEmailFile | ConvertTo-SecureString
-$credencialesEmail = New-Object System.Management.Automation.PSCredential ($usuarioEmail, $secPasswdEMail)
+$credencialesEmail = New-Object System.Management.Automation.PSCredential ($usuarioEmail, $secPasswdEmail)
 
 # Paths
 # Compatibles en sistemas Windows: "C:/pathLocal/datos/" o "C:\\pathLocal\\datos\\"
