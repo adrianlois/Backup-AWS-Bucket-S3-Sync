@@ -76,4 +76,5 @@ Si queremos crear una tarea programada en Windows (taskschd.msc) para la ejecuci
 
 - pathLocalPs1="pathLocalFichero.ps1"
 
-**MountDismountUSB_VeeamBackup**: scripts PowerShell y Batch para montar y desmontar el dispositivo USB extraíble durante el tiempo en el que se realiza el segundo backup con Veeam Backup. 
+#### MountDismountUSB_VeeamBackup
+Scripts PowerShell y Batch para montar y desmontar el dispositivo USB extraíble durante el tiempo en el que se realiza el segundo backup con Veeam Backup. 
