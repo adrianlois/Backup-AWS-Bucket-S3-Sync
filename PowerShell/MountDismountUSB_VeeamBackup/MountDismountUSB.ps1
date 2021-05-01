@@ -8,8 +8,8 @@ Function MountDismountUSB {
 	)
 
 	$id = (Get-Volume | Where-Object {$_.DriveLetter -eq "$dl"}).UniqueId
-	mountvol $dl+":\" $id
+	mountvol $dl + ":\" $id
 	Start-Sleep -Seconds $s
-	mountvol $dl+":\" /p
+	mountvol $dl + ":\" /p
 }
 MountDismountUSB -dl "P" -s "2400"
