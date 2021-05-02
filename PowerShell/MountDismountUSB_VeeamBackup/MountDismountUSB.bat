@@ -1,4 +1,4 @@
 @echo off
-mountvol P:\ \\?\Volume{2a3fec37-0000-0000-0000-100000000000}
+mountvol F:\ \\?\Volume{2f3cec57-0000-0000-0000-100000000000}
 timeout 2400
-mountvol P:\ /p
+mountvol F:\ /p
