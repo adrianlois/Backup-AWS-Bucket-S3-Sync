@@ -12,4 +12,4 @@ Function MountDismountUSB {
 	Start-Sleep -Seconds $s
 	mountvol $dl + ":\" /p
 }
-MountDismountUSB -dl "P" -s "2400"
+MountDismountUSB -dl "F" -s "2400"
