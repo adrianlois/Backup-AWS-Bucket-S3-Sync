@@ -1,4 +1,4 @@
-# Backup-aws-sync-bucket-S3-Bash-PowerShell
+# Backups-aws-sync-bucket-S3-Bash-PowerShell
 Backups en Bash Shell Script Linux y PowerShell Windows - Sincronizar datos locales a un bucket S3 de AWS con AWSCLI (serverless)
 
 ## Bash Shell Script (Linux o MacOS)
