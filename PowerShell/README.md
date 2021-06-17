@@ -25,7 +25,7 @@ Default output format [None]: json
 - $pathLocalDatos = "C:\\\pathLocal\\\datos\\\\"
 - $pathRemotoBucketS3 = "s3://bucketS3/backup/"
 - $usuarioEmail = "usuarioEmail@gmail.com" 
-- $passwdEmailFile = "Path_Fichero_Password"
+- $passwdEmailFile = "pathFicheroPassword.pass"
 - $asuntoEmail = "asuntoEmail"
 - $cuerpoEmail = Será el contenido del fichero de log adjunto en el envío del mail. 
 
