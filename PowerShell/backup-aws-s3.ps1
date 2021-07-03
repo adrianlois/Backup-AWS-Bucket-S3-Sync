@@ -13,15 +13,15 @@ $usuarioEmail = "usuarioEmail@gmail.com"
 $passwdEmailFile = "C:\PATH\backup-aws-s3.pass"
 $asuntoEmail = "asuntoEmail"
 
-# Obtener password cifrada del fichero y establecer credenciales
-$secPasswdEmail = Get-Content -Path $passwdEmailFile | ConvertTo-SecureString
-$credencialesEmail = New-Object System.Management.Automation.PSCredential ($usuarioEmail, $secPasswdEmail)
-
 # Paths
 # Compatibles en sistemas Windows: "C:/pathLocal/datos/" o "C:\\pathLocal\\datos\\"
 $pathLocalDatos = "C:\\pathLocal\\datos\\"
 $pathRemotoBucketS3 = "s3://bucketS3/backup/"
 $backupLog = "backup_$fechaActual.log"
+
+# Obtener password cifrada del fichero y establecer credenciales
+$secPasswdEmail = Get-Content -Path $passwdEmailFile | ConvertTo-SecureString
+$credencialesEmail = New-Object System.Management.Automation.PSCredential ($usuarioEmail, $secPasswdEmail)
 
 # Comprobar si existen ficheros de log pasados del backup
 if (Test-Path "*backup*.log") { 
