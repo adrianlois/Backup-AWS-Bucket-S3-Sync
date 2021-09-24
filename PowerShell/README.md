@@ -13,7 +13,9 @@ Backups - Script en Powershell para sincronizar datos locales a un bucket S3 (Si
 Se creará un usuario específico para este fin únicamente con los permisos y accesos necesarios.
 
 #### Identity and Access Management (IAM)
-1. Crear un usuario no administrativo que no pueda iniciar sesión en la consola de AWS y que solo pueda conectarse a través de un ID y clave de acceso, será la que se establezca posteriormente en el fichero %userprofile%\.aws\credentials.
+1. Crear un nuevo usuario con las siguientes condiciones:
+- Sin ningún tipo de privilegio administrativo, tampoco podrá iniciar sesión en la consola de administración de AWS.
+- Solo se podrá conectar a través de su ID y clave de acceso (será la que se establezca posteriormente en el fichero %userprofile%\.aws\credentials).
 
 ![Credenciales sesion usuario aws](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/credenciales_sesion_usuario_aws.png)
 
