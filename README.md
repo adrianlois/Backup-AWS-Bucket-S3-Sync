@@ -3,6 +3,7 @@ Backups en Bash Shell Script Linux y PowerShell Windows - Sincronizar datos loca
 
 ## Bash Shell Script (Linux o MacOS)
 
+- Política de permisos en AWS S3 (IAM)
 - Instalación y configuración de AWSCLI Linux
 - Modificación de variables del bash script *backup-aws-S3.sh*
 - Instalación y configuración de SSMTP
@@ -11,6 +12,7 @@ Backups en Bash Shell Script Linux y PowerShell Windows - Sincronizar datos loca
 
 ## PowerShell (Windows)
 
+- Política de permisos en AWS S3 (IAM)
 - Instalación y configuración de AWSCLI Windows
 - Modificación de variables del PowerShell script *backup-aws-S3.ps1*
 - Definir sintaxis de directorios
