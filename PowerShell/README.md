@@ -6,11 +6,29 @@ Backups - Script en Powershell para sincronizar datos locales a un bucket S3 (Si
 - 3. Se envía el fichero de log vía Email desde el smtp de una cuenta de correo Gmail.
 
 ## Requisitos previos
+### Política de permisos en AWS S3  
+
+> Por seguridad en la automatización de este tipo de backups NO se recomienda usar un usuario raíz y con acceso a la consola de AWS.
+
+Se creará un usuario específico para este fin únicamente con los permisos y accesos necesarios.
+
+#### Identity and Access Management (IAM)
+1. Crear un usuario no administrativo que no pueda iniciar sesión en la consola de AWS y que solo pueda conectarse a través de un ID y clave de acceso, será la que se establezca posteriormente en el fichero %userprofile%\.aws\credentials.
+
+![Credenciales sesion usuario aws](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/credenciales_sesion_usuario_aws.png)
+
+2. Crear una nueva política donde solo se especifique:
+- Servicio: S3
+- Acciones: Enumeration (ListBucket), Escritura (DeleteObject, PutObject)
+- Recursos: Especificar únicamente el recuro ARN del bucket donde se realizarán los backups y un * para las acciones de todos los objetos dentro del bucket.
+
+![Política permisos s3 aws](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/pol%C3%ADtica_permisos_s3_aws.png)
+
 ### Configuración "Access Key" y "Secret Access key" para usar aws-cli
 
-1. [Instalación de AWSCLI en Windows](https://docs.aws.amazon.com/es_es/cli/latest/userguide/install-windows.html).
+3. [Instalación de AWSCLI en Windows](https://docs.aws.amazon.com/es_es/cli/latest/userguide/install-windows.html).
 
-2. Previamente se deberá crear un usuario de IAM con permisos en la política "AmazonS3FullAccess" y establecer las keys en AWSCLI. En un entorno Windows estas keys quedarán almacenadas en el fichero %userprofile%\.aws\credentials.
+4. Previamente se deberá crear un usuario de IAM con permisos en la política "AmazonS3FullAccess" y establecer las keys en AWSCLI. En un entorno Windows estas keys quedarán almacenadas en el fichero %userprofile%\.aws\credentials.
 
 ```
 $ aws configure
@@ -59,7 +77,7 @@ c:/directorio/backup/
 
 - *Se usará el cmdlet "Send-MailMessage" de PowerShell para el envío de Emails*
 
-- Ayuda comando aws s3 sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
+- Referencia CLI aws s3 sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
 
 ### Envío log cuenta Gmail (Google)
 Para el envío del log vía Gmail es necesario activar el acceso a "Aplicaciones menos seguras" en la cuenta Google. Por seguridad, se debería crear una cuenta específica para esta finalidad.
