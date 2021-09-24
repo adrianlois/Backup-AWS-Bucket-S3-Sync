@@ -6,7 +6,7 @@ Backups - Script en Powershell para sincronizar datos locales a un bucket S3 (Si
 - 3. Se envía el fichero de log vía Email desde el smtp de una cuenta de correo Gmail.
 
 ## Requisitos previos
-### Política de permisos en AWS S3  
+### Política de permisos en AWS S3
 
 > Por seguridad en la automatización de este tipo de backups NO se recomienda usar un usuario raíz y con acceso a la consola de AWS.
 
@@ -30,7 +30,7 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 
 3. [Instalación de AWSCLI en Windows](https://docs.aws.amazon.com/es_es/cli/latest/userguide/install-windows.html).
 
-4. Previamente se deberá crear un usuario de IAM con permisos en la política "AmazonS3FullAccess" y establecer las keys en AWSCLI. En un entorno Windows estas keys quedarán almacenadas en el fichero %userprofile%\.aws\credentials.
+4. Establecer las access keys en AWSCLI. En un entorno Windows estas keys quedarán almacenadas en el fichero %userprofile%\.aws\credentials.
 
 ```
 $ aws configure
