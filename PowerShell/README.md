@@ -22,7 +22,7 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 - Acciones: Enumeration (ListBucket), Escritura (DeleteObject, PutObject)
 - Recursos: Especificar únicamente el recuro ARN del bucket donde se realizarán los backups y un * para las acciones de todos los objetos dentro del bucket.
 
-![Política permisos s3 aws](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/pol%C3%ADtica_permisos_s3_aws.png)
+![Política permisos s3 aws](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/politica_permisos_s3_aws.png)
 
 ### Configuración "Access Key" y "Secret Access key" para usar aws-cli
 
