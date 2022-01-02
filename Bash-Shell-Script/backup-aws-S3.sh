@@ -1,9 +1,5 @@
 #!/bin/bash
 
-#####################
-# Autor @adrianlois_
-#####################
-
 # Fecha y Hora
 fechaHoraActual="$(date +'%d/%m/%Y - %H:%M:%S')"
 fechaActual="$(date +'%d-%m-%Y')"
