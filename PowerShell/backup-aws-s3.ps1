@@ -1,6 +1,3 @@
-#####################
-# Autor @adrianlois_
-#####################
 # Crear password cifrada en un fichero
 # "MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\backup-aws-s3.pass"
 
