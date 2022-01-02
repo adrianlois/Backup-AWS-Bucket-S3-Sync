@@ -9,7 +9,7 @@ fechaHoraActual="$(date +'%d/%m/%Y - %H:%M:%S')"
 fechaActual="$(date +'%d-%m-%Y')"
 
 # Email
-envioEmailCuentaUsuario="emailCuentaUsuario@gmail.com"
+envioEmailCuentaUsuario="emailCuenta@gmail.com"
 asuntoEmail="asuntoEmail"
 cuerpoEmail="cuerpoEmail"
 
