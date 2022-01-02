@@ -29,6 +29,8 @@ if (Test-Path "*backup*.log") {
     }
 
 # Mostrar fecha y hora del comienzo del proceso de backup al princpio del log
+# $tiempoComienza será necesaria para calcular el tiempo transcurrido de backup
+$tiempoComienza = (Get-Date)
 Write-Output "Backup comienza: $fechaHoraActual" > $backupLog
 Write-Output "# # # # # # # # # # # # # # # # # # # #`n" >> $backupLog
 
@@ -36,10 +38,13 @@ Write-Output "# # # # # # # # # # # # # # # # # # # #`n" >> $backupLog
 aws s3 sync $pathLocalDatos $pathRemotoBucketS3 --sse AES256 --delete --include "*" >> $backupLog
 
 Write-Output "# # # # # # # # # # # # # # # # # # # #" >> $backupLog
-# Mostrar fecha y hora de la finalización del proceso de backup al final del log
+# Mostrar fecha y hora de la finalización del proceso de backup en el log y $tiempoFinaliza calculará el tiempo transcurrido
 # Resetear la variable $fechaHoraActual para obtener la hora actual hasta este momento del proceso de backup
+$tiempoFinaliza = (Get-Date)
+$tiempoTranscurrido = $($tiempoFinaliza-$tiempoComienza).ToString().Substring(0,8)
 $fechaHoraActual = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
 Write-Output "Backup finaliza: $fechaHoraActual" >> $backupLog
+Write-Output "Tiempo total transcurrido: $tiempoTranscurrido" >> $backupLog
 
 # Body Email
 $cuerpoEmail = [System.Io.File]::ReadAllText($backupLog)
