@@ -40,7 +40,7 @@ Write-Output "# # # # # # # # # # # # # # # # # # # #" >> $backupLog
 $tiempoFinaliza = (Get-Date)
 $tiempoTranscurrido = $($tiempoFinaliza-$tiempoComienza).ToString().Substring(0,8)
 $fechaHoraActual = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
-Write-Output "Backup finaliza: $fechaHoraActual" >> $backupLog
+Write-Output "Backup finaliza: $fechaHoraActual`n" >> $backupLog
 Write-Output "Tiempo total transcurrido: $tiempoTranscurrido" >> $backupLog
 
 # Body Email
