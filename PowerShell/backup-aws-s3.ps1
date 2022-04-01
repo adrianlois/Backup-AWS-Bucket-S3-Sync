@@ -1,5 +1,5 @@
 # Crear password cifrada en un fichero
-# "MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\backup-aws-s3.pass"
+# "MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\Passwd-BackupS3Aws"
 
 # Fecha y Hora
 $fechaHoraActual = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
@@ -7,7 +7,7 @@ $fechaActual = Get-Date -uformat "%d-%m-%Y"
 
 # Email
 $usuarioEmail = "usuarioEmail@gmail.com" 
-$passwdEmailFile = "C:\PATH\backup-aws-s3.pass"
+$passwdEmailFile = "C:\PATH\Passwd-BackupS3Aws"
 $asuntoEmail = "asuntoEmail"
 
 # Paths
