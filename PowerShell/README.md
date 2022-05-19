@@ -58,7 +58,7 @@ Una forma de evitar escribir una password en texto plano en un script ps1, es ge
 En la variable anterior *$passwdEmailFile* se indicará el path donde se almacene dicho fichero.
 
 ```
-"MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\Passwd-BackupS3Aws"
+"MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\PasswdBackupS3Aws"
 ```
 
 **_Aclaraciones_**
