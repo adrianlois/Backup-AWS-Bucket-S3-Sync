@@ -26,7 +26,7 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 
 ![Política permisos accesos s3 aws](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/politica_permisos_acceso_s3_aws.png)
 
-### Resumen de la política - JSON
+#### Resumen de la política - JSON
 
 ```json
 {
