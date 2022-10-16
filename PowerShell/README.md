@@ -98,3 +98,11 @@ Si queremos crear una tarea programada en Windows (taskschd.msc) para la ejecuci
 
 #### MountDismountUSB_VeeamBackup
 Scripts en versiones PowerShell y Batch para montar y desmontar el dispositivo USB extraíble durante el tiempo en el que se realiza el segundo backup con Veeam Backup. 
+
+# Recuperación Backup: S3 a Local
+
+Copiar ficheros y directorios de bucket S3 a local.
+
+https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
+```
+aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
