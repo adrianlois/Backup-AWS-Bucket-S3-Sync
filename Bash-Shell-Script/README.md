@@ -99,3 +99,13 @@ https://myaccount.google.com/lesssecureapps
 ![Aplicaciones menos seguras Google](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-bucket-S3-Bash-PowerShell/master/screenshots/ejecucion_app_menos_seguras_gmail.png)
 
 ![Envio Email Log Gmail Powershell](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-bucket-S3-Bash-PowerShell/master/screenshots/envio_email_backup_log_gmail_powershell.png)
+
+
+# Recuperación Backup: S3 a Local
+
+Copiar ficheros y directorios de bucket S3 a local.
+
+https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
+```
+aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
+```
