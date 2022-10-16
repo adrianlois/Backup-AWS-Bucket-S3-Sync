@@ -105,6 +105,8 @@ https://myaccount.google.com/lesssecureapps
 
 Copiar ficheros y directorios de bucket S3 a local.
 
+Hay que tener en cuenta de añadir los permisos adicionales para poder descargar ficheros y carpetas desde un bucket S3 a local. 
+
 https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
 ```
 aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
