@@ -27,6 +27,29 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 
 ![Política permisos accesos s3 aws](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/politica_permisos_acceso_s3_aws.png)
 
+### Resumen de la política - JSON
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:ListBucket",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*/*",
+                "arn:aws:s3:::backup"
+            ]
+        }
+    ]
+}
+```
+
 ### Configuración "Access Key" y "Secret Access key" para usar aws-cli
 
 3. [Instalación de AWSCLI en Windows](https://docs.aws.amazon.com/es_es/cli/latest/userguide/install-windows.html).
