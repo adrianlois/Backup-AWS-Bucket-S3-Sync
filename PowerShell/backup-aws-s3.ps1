@@ -22,7 +22,7 @@ $credencialesEmail = New-Object System.Management.Automation.PSCredential ($usua
 
 # Comprobar si existen ficheros de log pasados del backup
 if (Test-Path "*backup*.log") { 
-    Remove-Item -Path "*backup*.log" -Recurse -Force 
+    Remove-Item -Path "*backup*.log" -Recurse -Force
     }
 
 # Mostrar fecha y hora del comienzo del proceso de backup al princpio del log
