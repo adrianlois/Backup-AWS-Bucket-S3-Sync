@@ -53,6 +53,9 @@ $cuerpoEmail = [System.Io.File]::ReadAllText($backupLog)
 # Envío del fichero log adjunto vía Email usando Gmail.
 Send-MailMessage -From $usuarioEmail -To $usuarioEmail -Subject "$asuntoEmail - $fechaHoraActual" -Body "$cuerpoEmail" -Attachments "$backupLog" -SmtpServer smtp.gmail.com -UseSsl -Credential $credencialesEmail
 
+# Cargar e invocar función para el envío del fichero de backup log vía el bot de Telegram
+.\Send-TelegramLocalFile.ps1
+
 # Liberar los valores de passwords de los objetos SecureString almacenados que hacen referencia en un puntero de memoria (esta memoria se encuentra en una zona distinta donde no accede el recolector de basura)
 $ptr1 = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secPasswdEmail)
 [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr1)
