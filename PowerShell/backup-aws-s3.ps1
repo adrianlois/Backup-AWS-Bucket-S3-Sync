@@ -57,7 +57,7 @@ Send-MailMessage -From $usuarioEmail -To $usuarioEmail -Subject "$asuntoEmail - 
 .\Send-TelegramLocalFile.ps1
 # Establecer token para un nuevo bot con @BotFather
 $BotToken = "XXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-# Establecer ChatID de nuestro usuario de Telegram con @MyIDBot
+# Establecer ChatID de nuestro usuario de Telegram con @MyIDBot o @RawDataBot
 $ChatID = "XXXXXXXXX"
 # Establecer la ruta del archivo binario de log que se enviará al bot de Telegram
 $File = "C:\path\LogFile.log"
