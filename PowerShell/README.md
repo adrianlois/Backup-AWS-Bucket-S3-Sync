@@ -80,7 +80,7 @@ Una forma de evitar escribir una password en texto plano en un script ps1, es ge
 
 En la variable anterior *$passwdEmailFile* se indicará el path donde se almacene dicho fichero.
 
-```
+```ps
 "MiPassword" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File "C:\PATH\PasswdBackupS3Aws"
 ```
 
@@ -104,13 +104,55 @@ c:/directorio/backup/
 
 - Referencia CLI aws s3 sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
 
-### Envío log cuenta Gmail (Google)
+### Envío del fichero log vía correo Gmail (Google)
 Para el envío del log vía Gmail es necesario activar el acceso a "Aplicaciones menos seguras" en la cuenta Google. Por seguridad, se debería crear una cuenta específica para esta finalidad.
 https://myaccount.google.com/lesssecureapps
 
 ![Aplicaciones menos seguras Google](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-bucket-S3-Bash-PowerShell/master/screenshots/ejecucion_app_menos_seguras_gmail.png)
 
 ![Envio Email Log Gmail Powershell](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-bucket-S3-Bash-PowerShell/master/screenshots/envio_email_backup_log_gmail_powershell.png)
+
+### Envío del fichero log vía bot Telegram
+Para poder enviar el fichero de log y notificarlo a través de un bot propio de Telegram se cargará y llamara a la función "Send-TelegramLocalFile". Pero previamente debemos tener el bot de telegram creado y los prequisitos establecidos en la función como serían el BotToken, ChatID y la ruta del fichero log.
+
+#### Prerrequisitos
+
+La función "Send-TelegramLocalFile" es compatible con versiones de PowerShell 6.1.0 o superiores. 
+1. Instalar la *pwsh.exe* versión 7:
+
+- https://learn.microsoft.com/es-es/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3
+
+2. Añadir el bot de @BotFather y crear un nuevo bot y obtener su Token. Establecer un nombre de bot y un user_bot.
+```
+/newbot
+```
+Establecer una imagen a mostrar para para el bot.
+```
+/mybots > seleccionamos el bot > edit bot > edit botpic > cargamos la imagen como como foto.
+```
+3. Para obtener el ChatID de nuestro usuario de Telegram agremos el bot @IDBot.
+```
+/getid
+```
+
+4. Establecer las variables sustituyendo los valores obtenidos anteriormente. 
+
+Generar token para un nuevo bot con @BotFather
+```ps
+$BotToken = "XXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+```
+Establecer ChatID de nuestro usuario de Telegram con @IDBot
+```ps
+$ChatID = "XXXXXXXXX"
+```
+Establecer la ruta del archivo binario de log que se enviará al bot de Telegram
+```ps
+$File = "C:\path\LogFile.log"
+```
+
+![Envio Email Log Gmail Powershell](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/envio_bot_telegram_backup_log_powershell.png)
+
+
 
 ### Llamada a fichero PowerShell .ps1 desde un fichero de proceso por lotes .bat
 Si queremos crear una tarea programada en Windows (taskschd.msc) para la ejecución automatizada de backups a AWS S3. La forma más efectiva sería establecer directamente un fichero de proceso por lotes .bat y que este llame al fichero PowerShell .ps1.
@@ -120,7 +162,7 @@ Si queremos crear una tarea programada en Windows (taskschd.msc) para la ejecuci
 - pathLocalPs1="pathLocalFichero.ps1"
 
 #### MountDismountUSB_VeeamBackup
-Scripts en versiones PowerShell y Batch para montar y desmontar el dispositivo USB extraíble durante el tiempo en el que se realiza el segundo backup con Veeam Backup. 
+Scripts en versiones PowerShell y Batch para montar y desmontar el dispositivo USB extraíble durante el tiempo en el que se realiza el segundo backup con Veeam Backup.
 
 # Recuperación Backup: S3 a Local
 
@@ -129,6 +171,6 @@ Copiar ficheros y directorios de bucket S3 a local.
 Hay que tener en cuenta de añadir los permisos adicionales para poder descargar ficheros y carpetas desde un bucket S3 a local. 
 
 https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
-```
+```ps
 aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
 ```
