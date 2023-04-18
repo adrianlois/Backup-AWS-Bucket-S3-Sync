@@ -1,10 +1,3 @@
-# Generate token for a new bot with @BotFather
-$BotToken = "XXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-# Get ChatID of our Telegram user with @IDBot
-$ChatID = "XXXXXXXXX"
-# Set the path of the binary file to be sent
-$File = "C:\path\file.log"
-
 function Send-TelegramLocalFile {
 	[CmdletBinding()]
 	param (
@@ -36,5 +29,3 @@ function Send-TelegramLocalFile {
 	$results = Invoke-RestMethod @invokeRestMethodSplat
 	return $results
 }
-
-Send-TelegramLocalFile -BotToken $BotToken -ChatID $ChatID -File $File
