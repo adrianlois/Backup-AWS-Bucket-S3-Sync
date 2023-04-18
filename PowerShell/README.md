@@ -122,7 +122,7 @@ La función "Send-TelegramLocalFile" es compatible con versiones de PowerShell 6
 
 - https://learn.microsoft.com/es-es/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3
 
-2. Añadir el bot de @BotFather y crear un nuevo bot y obtener su Token. Establecer un nombre de bot y un user_bot.
+2. Añadir el bot de [@BotFather](https://t.me/botfather) y crear un nuevo bot y obtener su Token. Establecer un nombre de bot y un user_bot.
 ```
 /newbot
 ```
@@ -130,7 +130,7 @@ Establecer una imagen a mostrar para para el bot.
 ```
 /mybots > seleccionamos el bot > edit bot > edit botpic > cargamos la imagen como como foto.
 ```
-3. Para obtener el ChatID de nuestro usuario de Telegram agremos el bot @IDBot.
+3. Para obtener el ChatID de nuestro usuario de Telegram agremos el bot [@MyIDBot](https://telegram.me/myidbot).
 ```
 /getid
 ```
