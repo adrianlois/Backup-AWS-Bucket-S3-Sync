@@ -130,7 +130,7 @@ Establecer una imagen a mostrar para para el bot.
 ```
 /mybots > seleccionamos el bot > edit bot > edit botpic > cargamos la imagen como como foto.
 ```
-3. Para obtener el ChatID de nuestro usuario de Telegram agremos el bot [@MyIDBot](https://telegram.me/myidbot).
+3. Para obtener el ChatID de nuestro usuario de Telegram agremos el bot [@MyIDBot](https://telegram.me/myidbot) o [@RawDataBot](https://telegram.im/@rawdatabot).
 ```
 /getid
 ```
