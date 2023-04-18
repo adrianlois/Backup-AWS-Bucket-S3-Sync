@@ -55,7 +55,7 @@ Send-MailMessage -From $usuarioEmail -To $usuarioEmail -Subject "$asuntoEmail - 
 
 # Cargar en memoria y llamar a la función "Send-TelegramLocalFile" para el envío del fichero de backup log vía el bot de Telegram
 .\Send-TelegramLocalFile.ps1
-# Generar token para un nuevo bot con @BotFather
+# Establecer token para un nuevo bot con @BotFather
 $BotToken = "XXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 # Establecer ChatID de nuestro usuario de Telegram con @IDBot
 $ChatID = "XXXXXXXXX"
