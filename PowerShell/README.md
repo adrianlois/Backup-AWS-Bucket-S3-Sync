@@ -137,15 +137,15 @@ Establecer una imagen a mostrar para para el bot.
 
 4. Establecer las variables sustituyendo los valores obtenidos anteriormente. 
 
-Generar token para un nuevo bot con @BotFather
+Establecer token para un nuevo bot con @BotFather.
 ```ps
 $BotToken = "XXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 ```
-Establecer ChatID de nuestro usuario de Telegram con @IDBot
+Establecer ChatID de nuestro usuario de Telegram con @IDBot.
 ```ps
 $ChatID = "XXXXXXXXX"
 ```
-Establecer la ruta del archivo binario de log que se enviará al bot de Telegram
+Establecer la ruta del archivo binario de log que se enviará al bot de Telegram.
 ```ps
 $File = "C:\path\LogFile.log"
 ```
@@ -171,6 +171,6 @@ Copiar ficheros y directorios de bucket S3 a local.
 Hay que tener en cuenta de añadir los permisos adicionales para poder descargar ficheros y carpetas desde un bucket S3 a local. 
 
 https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
-```ps
+```
 aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
 ```
