@@ -118,7 +118,7 @@ Para poder enviar el fichero de log y notificarlo a través de un bot propio de 
 #### Prerrequisitos
 
 La función "Send-TelegramLocalFile" es compatible con versiones de PowerShell 6.1.0 o superiores. 
-1. Instalar la *pwsh.exe* versión 7:
+1. Instalar la PowerShell versión 7.3 (*pwsh.exe*):
 
 - https://learn.microsoft.com/es-es/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.3
 
