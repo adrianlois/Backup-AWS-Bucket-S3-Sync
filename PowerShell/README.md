@@ -1,5 +1,5 @@
 # Backup AWS Sync S3 - PowerShell
-Script en Powershell para automatizar el proceso de sincronización datos locales a un bucket S3 (Simple Storage Service) de Amazon Web Services a través de la interfaz de línea de comandos de AWSCLI.
+Script en Powershell para automatizar el proceso de sincronización de datos locales a un bucket S3 (Simple Storage Service) de Amazon Web Services a través de la interfaz de línea de comandos de AWSCLI.
 
 - Funciones específicas para montar y desmontar unidades externas USB donde se almacenarán las copias de Veeam Backup. 
 - Realizar una compresión 7zip cifrada de forma simétrica, usando adicionalmente un método de capas de ficheros comprimidos para almacenar la BBDD + key file de KeePassXC.
