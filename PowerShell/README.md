@@ -256,12 +256,22 @@ Esto llamará a un fichero PowerShell .ps1 desde un fichero de proceso por lotes
 Si creamos una tarea programada en Windows (taskschd.msc) para una ejecución programada, la forma más efectiva sería establecer directamente un fichero de proceso por lotes .bat y que este llame al fichero PowerShell .ps1 donde cargará e invocará al resto de funciones.
 
 ## USBDrive-MountUnmount
+### Set-USBDriveMountUnmount.ps1
 
-Podemos usar el script **Set-USBDriveMountUnmount.ps1** en el caso de no querer realizar en el mismo flujo de ejecución el proceso de montaje y desmontaje del dispositivo externo USB utilizado para el alamacenamiento de copias de Veeam Backup.
+Podemos usar el script *Set-USBDriveMountUnmount.ps1* en el caso de no querer realizar en el mismo flujo de ejecución el proceso de montaje y desmontaje del dispositivo externo USB utilizado para el alamacenamiento de copias de Veeam Backup.
 
 Será necesario crear otra tarea programada para controlar los tiempos de espera en el montaje y desmontaje del volumen. 
 
 Esto sería una alternativa de control independiente a las funciones *Set-USBDriveMount* y *Set-USBDriveUnmount* indicadas en script principal Backup-AWS-S3.ps1.
+
+### USBDrive-UnmountStartSystem.bat
+
+Este script se llamará desde una nueva tarea programada en la cual los desencadenadores de ejecución serían: "cada inicio nuevo de sistema" y "primer inicio de sesión". Asegurando así que la unidad externa USB no se monte de forma automática por el sistema tras estos eventos.
+
+## PasswdBackup
+### New-PasswdFile.ps1
+
+Este script automatizará el proceso de creación de los ficheros de password cifradas que serán utilizados en las funciones *Compress-7ZipEncryption* y *Send-EmailDocumentAndMessage*.
 
 # Recuperación Backup: S3 a Local
 
