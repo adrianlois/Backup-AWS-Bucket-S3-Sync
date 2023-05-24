@@ -247,7 +247,7 @@ Function Send-TelegramBotMessageAndDocument {
             $resultSendShortMessage = Invoke-RestMethod @invokeRestMethodSplat
         }
 
-        # Enviar el fichero adjunto backupLog al chatBot. 
+        # Enviar el fichero adjunto backupLog al chatBot.
         $invokeRestMethodSplat = @{
             Uri = 'https://api.telegram.org/bot{0}/sendDocument' -f $BotToken
             Form = @{
