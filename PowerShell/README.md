@@ -9,7 +9,7 @@ Script en Powershell para sincronizar datos locales a un bucket S3 (Simple Stora
 - Enviar el fichero de log, contenido en formato de mensaje o ambas vía ChatBot de Telegram.
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="320" />
+<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="300" />
 </div>
 
 ## Requisitos previos
