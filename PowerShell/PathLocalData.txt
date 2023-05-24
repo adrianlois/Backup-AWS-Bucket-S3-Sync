@@ -1,0 +1,4 @@
+C:\PATH_1\Datos
+C:\PATH_2\Fotos
+H:\PATH_3\Videos
+J:\PATH_4\Musica

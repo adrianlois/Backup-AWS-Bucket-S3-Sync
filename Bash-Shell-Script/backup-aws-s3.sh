@@ -25,7 +25,7 @@ echo "Backup comienza: $fechaHoraActual" > $backupLog
 echo -e "# # # # # # # # # # # # # # # # # # # #\n" >> $backupLog
 
 # Sincronizar datos locales a bucket S3 de AWS
-aws s3 sync $pathLocalDatos $pathRemotoBucketS3 --sse AES256 --delete --include "*" >> $backupLog
+aws s3 sync $pathLocalDatos $pathRemotoBucketS3 --sse AES256 --delete --include "*" --exclude "*.DS_Store" >> $backupLog
 
 echo -e "\n# # # # # # # # # # # # # # # # # # # #" >> $backupLog
 # Mostrar fecha y hora de la finalización del proceso de backup al final del log

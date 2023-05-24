@@ -64,7 +64,7 @@ Default region name [None]: us-west-2
 Default output format [None]: json
 ```
 
-#### **backup-aws-S3.sh**: establecer los valores deseados en las variables.
+#### **Backup-AWS-S3.sh**: establecer los valores deseados en las variables.
 
 - pathLocalDatos="/pathLocal/datos/"
 - pathRemotoBucketS3="s3://bucketS3/backup/"
@@ -132,5 +132,5 @@ Hay que tener en cuenta de añadir los permisos adicionales para poder descargar
 
 https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
 ```
-aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
+aws s3 cp s3://BucketS3Name/backup/ <LOCAL_PATH> --recursive
 ```
