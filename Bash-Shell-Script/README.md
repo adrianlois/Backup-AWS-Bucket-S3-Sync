@@ -25,8 +25,6 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 - Acciones: Enumeration (ListBucket), Escritura (DeleteObject, PutObject)
 - Recursos: Especificar únicamente el recuro ARN del bucket donde se realizarán los backups y un * para las acciones de todos los objetos dentro del bucket.
 
-![Política permisos accesos s3 aws](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/politica_permisos_acceso_s3_aws.png)
-
 #### Resumen de la política - JSON
 
 ```json
@@ -42,8 +40,8 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
                 "s3:DeleteObject"
             ],
             "Resource": [
-                "arn:aws:s3:::*/*",
-                "arn:aws:s3:::backup"
+                "arn:aws:s3:::BucketS3Name",
+                "arn:aws:s3:::BucketS3Name/*"
             ]
         }
     ]
@@ -95,10 +93,10 @@ apt install -y ssmtp mailutils
 ```
 Editar el fichero **/etc/ssmtp/ssmtp.conf**: establecer los valores deseados para los siguientes parámetros.
 
-- root=EMAIL_GMAIL
+- root=EMAIL_OUTLOOK
 - hostname=HOSTNAME
-- AuthUser=EMAIL_GMAIL
-- AuthPass=PASSWORD_GMAIL
+- AuthUser=EMAIL_OUTLOOK
+- AuthPass=PASSWORD_OUTLOOK
 
 ### Desactivar el envío de alertas de correo de cron
 
@@ -116,13 +114,11 @@ MAILTO=""
 ```
 
 ### Envío log cuenta Gmail (Google)
-Para el envío del log vía Gmail es necesario activar el acceso a "Aplicaciones menos seguras" en la cuenta Google. Por seguridad, se debería crear una cuenta específica para esta finalidad.
-https://myaccount.google.com/lesssecureapps
+Envía un correo del fichero de log adjunto y su contenido vía protocolo SMTP de Outlook. 
 
-![Aplicaciones menos seguras Google](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3-Bash-PowerShell/master/screenshots/ejecucion_app_menos_seguras_gmail.png)
+> Por seguridad Gmail ya no permite esta opción. https://support.google.com/accounts/answer/6010255
 
-![Envio Email Log Gmail Powershell](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3-Bash-PowerShell/master/screenshots/envio_email_backup_log_gmail_powershell.png)
-
+![Envio Email Log](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3-Bash-PowerShell/master/screenshots/envio_email_backup_log_gmail_powershell.png)
 
 # Recuperación Backup: S3 a Local
 

@@ -158,7 +158,7 @@ J:\PATH_4\Musica
     Write-Output "Tiempo total transcurrido: $elapsedTime" | Out-File -FilePath $backupLog -Append
 }
 
-# Enviar correo del fichero de log adjunto y su contenido vía SMTP de Outlook.
+# Enviar correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook.
 Function Send-EmailMessageAndDocument {
     [CmdletBinding()]
     Param (

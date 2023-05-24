@@ -178,7 +178,7 @@ Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathB
 
 ### **Send-EmailMessageAndDocument**
 
-Esta función envía un correo del fichero de log adjunto y su contenido vía SMTP de Outlook. 
+Esta función envía un correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook. 
 
 > Por seguridad Gmail ya no permite esta opción. https://support.google.com/accounts/answer/6010255
 
