@@ -76,8 +76,10 @@ Esta función monta una unidad externa USB que será necesaria para almacenar la
 
 Para conocer y obtener previamente el GUID de un volumen ejecutamos en una consola "mountvol".
 
-- *-DriveLetter*: Letra de asignación de la unidad o volumen a montar en el sistema.
-- *-Guid*: Indentificador global correspondiente al volumen de disco correspondiente a la unidad externa a montar en el sistema.
+Parámetros de la función.
+
+- *DriveLetter*: Letra de asignación de la unidad o volumen a montar en el sistema.
+- *Guid*: Indentificador global correspondiente al volumen de disco correspondiente a la unidad externa a montar en el sistema.
 
 ```ps
 Set-USBDriveMount -DriveLetter "X" -Guid "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
@@ -87,7 +89,9 @@ Set-USBDriveMount -DriveLetter "X" -Guid "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 
 Esta función se ejecutará al final de todo el proceso, desmontará la unidad externa USB montada anteriormente en el principio del flujo de ejecución de la función "Set-USBDriveMount".
 
-- *-Seconds*: Tiempo en segundos que estará la unidad externa USB montada antes de ser desmontada del sistema. 
+Parámetro de la función.
+
+- *Seconds*: Tiempo en segundos que estará la unidad externa USB montada antes de ser desmontada del sistema. 
 
 ```ps
 Set-USBDriveUnmount -Seconds "XXXX"
@@ -117,14 +121,14 @@ En caso de que se necesite establecer nombres distintos será necesario cambiarl
 "Passw0rd.Kpxc" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\Passwd7zKpxc"
 ```
 
-3. Establecer parámetros en la llamada a la función.
+Parámetros de la función.
 
-- *-PathKdbx*: Ruta del fichero de la BBDD de KeePassXC .kdbx
-- *-PathKeyx*: Ruta del fichero de la key file de KeePassXC .keyx, en el caso de que se hubiera establecido en la creación de la BBDD.
-- *-File7zKpxc*: Ruta local del fichero final ya comprimido.
-- *-RemoteFile7zKpxc*: Ruta remota donde se moverá del fichero final ya comprimido.
-- *-PasswdFilePath*: Ruta de la carpeta donde se guardarán los ficheros que almacenan las contraseñas cifradas usadas en el proceso de compresión.
-- *-WorkPathTemp*: Ruta temporal donde se realizará el proceso aislado de compresión. Se recomienda crear una carpeta Temp en el mismo directorio donde se ejecute el script.
+- *PathKdbx*: Ruta del fichero de la BBDD de KeePassXC .kdbx
+- *PathKeyx*: Ruta del fichero de la key file de KeePassXC .keyx, en el caso de que se hubiera establecido en la creación de la BBDD.
+- *File7zKpxc*: Ruta local del fichero final ya comprimido.
+- *RemoteFile7zKpxc*: Ruta remota donde se moverá del fichero final ya comprimido.
+- *PasswdFilePath*: Ruta de la carpeta donde se guardarán los ficheros que almacenan las contraseñas cifradas usadas en el proceso de compresión.
+- *WorkPathTemp*: Ruta temporal donde se realizará el proceso aislado de compresión. Se recomienda crear una carpeta Temp en el mismo directorio donde se ejecute el script.
 
 ```ps
 Compress-7ZipEncryption -PathKdbx "C:\PATH\file.kdbx" -PathKeyx "C:\PATH\file.keyx" `
@@ -135,6 +139,8 @@ Compress-7ZipEncryption -PathKdbx "C:\PATH\file.kdbx" -PathKeyx "C:\PATH\file.ke
 ### **Invoke-BackupAWSS3**
 
 Esta función sincroniza los ficheros y directorios de una o varias rutas locales origen a un destino en un bucket S3 de AWS.
+
+Parámetros de la función.
 
 - *SourcePathLocalData*: Ruta absoluta del fichero "PathLocalData.txt", en este fichero se especifican los directorios donde será el origen de sincronización al bucket S3. Especificar los paths necesarios en  nuevas líneas.
 - *RemotePathBucketS3*: Ruta destino del bucket S3 donde se almacenerá y realizará la sincronización de paths locales especificados en el fichero PathLocalData.txt.  
@@ -215,12 +221,12 @@ Establecer una imagen a mostrar para para el bot.
 /getid
 ```
 
-Diferencias entre los parámetros **SendMessage** y **SendDocument**.
+Parámetros de la función. Diferencias entre establecer **SendMessage** y **SendDocument**.
 
-- *-BotToken*: Token del bot generado con @BotFather.
-- *-ChatID*: ID de chat obtenido con @RawDataBot o @MyIDBot.
-- *-SendMessage*: Si este parámetro está presente enviará solamente el contenido del fichero backup log en formato de texto al ChatBot.
-- *-SendDocument*: Si este parámetro está presente enviará al ChatBot el fichero de backup log adjunto y también enviará formato texto la fecha y hora del comienzo de backup y el tiempo total transcurrido del proceso de sincronización con el bucket S3.
+- *BotToken*: Token del bot generado con @BotFather.
+- *ChatID*: ID de chat obtenido con @RawDataBot o @MyIDBot.
+- *SendMessage*: Si este parámetro está presente enviará solamente el contenido del fichero backup log en formato de texto al ChatBot.
+- *SendDocument*: Si este parámetro está presente enviará al ChatBot el fichero de backup log adjunto y también enviará formato texto la fecha y hora del comienzo de backup y el tiempo total transcurrido del proceso de sincronización con el bucket S3.
 
 - -SendDocument  
 
