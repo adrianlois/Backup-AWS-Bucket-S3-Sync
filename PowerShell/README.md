@@ -9,7 +9,7 @@ Script en Powershell para sincronizar datos locales a un bucket S3 (Simple Stora
 - Enviar el fichero de log, contenido en formato de mensaje o ambas vía ChatBot de Telegram.
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="300" />
+<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="300" />
 </div>
 
 ## Requisitos previos
@@ -24,7 +24,7 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 - Sin ningún tipo de privilegio administrativo, tampoco podrá iniciar sesión en la consola de administración de AWS.
 - Solo se podrá conectar a través de su ID y clave de acceso (será la que se establezca posteriormente en el fichero *%USERPROFILE%\\.aws\credentials*).
 
-![Credenciales sesion usuario aws](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/credenciales_sesion_usuario_aws.png)
+![Credenciales sesion usuario aws](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/credenciales_sesion_usuario_aws.png)
 
 2. Crear una nueva política donde solo se especifique:
 - Servicio: S3
@@ -195,7 +195,7 @@ Esta función envía un correo del fichero de log adjunto y su contenido vía SM
 Send-EmailDocumentAndMessage -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
 ```
 
-![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-bucket-S3-Bash-PowerShell/master/screenshots/envio_email_backup_log_gmail_powershell.png)
+![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3-Bash-PowerShell/master/screenshots/envio_email_backup_log_gmail_powershell.png)
 
 ### **Send-TelegramBotMessageAndDocument**
 
@@ -233,21 +233,21 @@ Parámetros de la función. Diferencias entre establecer **SendMessage** y **Sen
 ```ps
 Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendDocument
 ```
-![Envio Telegram Bot fichero backup log SendDocument](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/envio_telegrambot_backup_log_powershell_sendDocument.png)
+![Envio Telegram Bot fichero backup log SendDocument](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/envio_telegrambot_backup_log_powershell_sendDocument.png)
 
 - -SendMessage
 
 ```ps
 Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendMessage
 ```
-![Envio Telegram Bot fichero backup log SendMessage](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessage.png)
+![Envio Telegram Bot fichero backup log SendMessage](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessage.png)
 
 - -SendMessage y -SendDocument
 
 ```ps
 Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendMessage -SendDocument
 ```
-![Envio Telegram Bot fichero backup log SendMessage y SendDocument](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessageDocument.png)
+![Envio Telegram Bot fichero backup log SendMessage y SendDocument](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessageDocument.png)
 
 ## Backup-AWS-S3-Trigger.bat
 
