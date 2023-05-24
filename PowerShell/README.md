@@ -249,13 +249,13 @@ Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXX
 ```
 ![Envio Telegram Bot fichero backup log SendMessage y SendDocument](https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessageDocument.png)
 
-### Backup-AWS-S3-Trigger.bat
+## Backup-AWS-S3-Trigger.bat
 
 Esto llamará a un fichero PowerShell .ps1 desde un fichero de proceso por lotes .bat. Establecer el path donde se encuentra el fichero Backup-AWS-S3.ps1.
 
 Si creamos una tarea programada en Windows (taskschd.msc) para una ejecución programada, la forma más efectiva sería establecer directamente un fichero de proceso por lotes .bat y que este llame al fichero PowerShell .ps1 donde cargará e invocará al resto de funciones.
 
-### USBDrive-MountUnmount
+## USBDrive-MountUnmount
 
 Podemos usar el script **Set-USBDriveMountUnmount.ps1** en el caso de no querer realizar en el mismo flujo de ejecución el proceso de montaje y desmontaje del dispositivo externo USB utilizado para el alamacenamiento de copias de Veeam Backup.
 
