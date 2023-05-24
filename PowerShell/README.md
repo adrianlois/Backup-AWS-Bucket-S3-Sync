@@ -2,7 +2,7 @@
 Script en Powershell para sincronizar datos locales a un bucket S3 (Simple Storage Service) de Amazon Web Services a través de la interfaz de línea de comandos de AWSCLI.
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="250" />
+<img src="https://raw.githubusercontent.com/adrianlois/Backups-aws-sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="300" />
 </div>
 
 - Funciones específicas para montar y desmontar unidades externas USB donde se almacenarán las copias de Veeam Backup. 
