@@ -1,4 +1,29 @@
 # Backup AWS Sync S3 - PowerShell
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="300" />
+</div>
+
+## Índice
+
+- [Descripción](#descripcion)
+- [Requisitos previos](#requisitos-previos)
+  - [Política de permisos en AWS S3](#política-de-permisos-en-aws-s3)
+  - [Identity and Access Management - IAM](#identity-and-access-management-iam)
+  - [Configuración "Access Key" y "Secret Access key"](#configuración-access-key-y-secret-access-key)
+- [Descripción de Funciones: Backup-AWS-S3.ps1](#descripción-de-funciones-backup-aws-s3-ps1)
+  - [Set-USBDriveMount](#set-usbdrivemount)
+  - [Set-USBDriveUnmount](#set-usbdriveunmount)
+  - [Compress-7ZipEncryption](#compress-7zipencryption)
+  - [Invoke-BackupAWSS3](#invoke-backupawss3)
+  - [Send-EmailMessageAndDocument](#send-emailmessageanddocument)
+  - [Send-TelegramBotMessageAndDocument](#send-telegrambotmessageanddocument)
+- [USBDrive-MountUnmount](#usbdrive-mountunmount)
+- [PasswdBackup](#passwdbackup)
+- [Recuperación Backup: S3 a Local](#recuperación-backup-s3-a-local)
+
+## Descripción
+
 Script en Powershell para automatizar el proceso de sincronización de datos locales a un bucket S3 (Simple Storage Service) de Amazon Web Services a través de la interfaz de línea de comandos de AWSCLI.
 
 - Funciones específicas para montar y desmontar unidades externas USB donde se almacenarán las copias de Veeam Backup. 
@@ -8,10 +33,6 @@ Script en Powershell para automatizar el proceso de sincronización de datos loc
 - Enviar el fichero de log vía Email.
 - Enviar el fichero de log, contenido en formato de mensaje o ambas vía ChatBot de Telegram.
 
-<div align="center">
-<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="300" />
-</div>
-
 ## Requisitos previos
 ### Política de permisos en AWS S3
 
@@ -19,7 +40,7 @@ Script en Powershell para automatizar el proceso de sincronización de datos loc
 
 Se creará un usuario específico para este fin únicamente con los permisos y accesos necesarios.
 
-#### Identity and Access Management (IAM)
+### Identity and Access Management (IAM)
 1. Crear un nuevo usuario con las siguientes condiciones:
 - Sin ningún tipo de privilegio administrativo, tampoco podrá iniciar sesión en la consola de administración de AWS.
 - Solo se podrá conectar a través de su ID y clave de acceso (será la que se establezca posteriormente en el fichero *%USERPROFILE%\\.aws\credentials*).
@@ -31,7 +52,7 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 - Acciones: Enumeration (ListBucket), Escritura (DeleteObject, PutObject)
 - Recursos: Especificar únicamente el recuro ARN del bucket y un "BucketS3Name/*" que aplicarán a todos los objetos dentro de ese bucket.
 
-#### Resumen de la política - JSON
+Resumen de la política - JSON
 
 ```json
 {
@@ -54,7 +75,7 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 }
 ```
 
-### Configuración "Access Key" y "Secret Access key" para usar aws-cli
+### Configuración "Access Key" y "Secret Access key"
 
 3. [Instalación de AWSCLI en Windows](https://docs.aws.amazon.com/es_es/cli/latest/userguide/install-windows.html).
 
@@ -68,8 +89,7 @@ Default region name [None]: eu-south-2
 Default output format [None]: json
 ```
 
-## Descripción de Funciones
-
+## Descripción de Funciones: Backup-AWS-S3.ps1
 ### **Set-USBDriveMount**
 
 Esta función monta una unidad externa USB que será necesaria para almacenar la primera copia que se realizarán por parte de [Veeam Backup](https://www.veeam.com/es/windows-endpoint-server-backup-free.html). Esto podría aplicarse a cualquier otro software de backup.
