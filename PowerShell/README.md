@@ -1,17 +1,17 @@
 # Backup AWS Sync S3 - PowerShell
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="300" />
+<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/backup-aws-sync-bucket-s3.png" width="320" />
 </div>
 
 ## Índice
 
-- [Descripción](#descripcion)
+- [Descripción](#descripción)
 - [Requisitos previos](#requisitos-previos)
   - [Política de permisos en AWS S3](#política-de-permisos-en-aws-s3)
   - [Identity and Access Management - IAM](#identity-and-access-management-iam)
   - [Configuración "Access Key" y "Secret Access key"](#configuración-access-key-y-secret-access-key)
-- [Descripción de Funciones: Backup-AWS-S3.ps1](#descripción-de-funciones-backup-aws-s3-ps1)
+- [Descripción de Funciones: Backup-AWS-S3.ps1](#descripción-de-funciones-backup-aws-s3ps1)
   - [Set-USBDriveMount](#set-usbdrivemount)
   - [Set-USBDriveUnmount](#set-usbdriveunmount)
   - [Compress-7ZipEncryption](#compress-7zipencryption)
@@ -52,7 +52,7 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 - Acciones: Enumeration (ListBucket), Escritura (DeleteObject, PutObject)
 - Recursos: Especificar únicamente el recuro ARN del bucket y un "BucketS3Name/*" que aplicarán a todos los objetos dentro de ese bucket.
 
-Resumen de la política - JSON
+**Resumen de la política - JSON**
 
 ```json
 {
@@ -293,7 +293,7 @@ Este script se llamará desde una nueva tarea programada en la cual los desencad
 
 Este script automatizará el proceso de creación de los ficheros de password cifradas que serán utilizados en las funciones *Compress-7ZipEncryption* y *Send-EmailDocumentAndMessage*.
 
-# Recuperación Backup: S3 a Local
+## Recuperación Backup: S3 a Local
 
 Copiar ficheros y directorios del bucket S3 a local.
 
