@@ -1,4 +1,4 @@
-# Backup AWS Sync S3 - Bash Shell Script
+# Backup AWS Bucket S3 Sync - Bash Shell Script
 
 Script en Bash para automatizar el proceso de sincronización de datos locales a un bucket S3 (Simple Storage Service) de Amazon Web Services a través de la interfaz de línea de comandos de AWS (AWSCLI).
 
