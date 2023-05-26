@@ -112,7 +112,7 @@ Function Invoke-BackupAWSS3 {
     }
 
 <#
-    # Alternativa si no se hace del fichero externo PathLocalData.txt.
+    # Alternativa si no se hace uso del fichero externo PathLocalData.txt.
     # Establecer los paths locales a sincronizar con el bucket S3 dentro de la propia función.
     $SourcePathLocalData = @"
 C:\PATH_1\Datos
