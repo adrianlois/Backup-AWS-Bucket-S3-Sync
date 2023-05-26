@@ -190,7 +190,7 @@ Verifica si uno o más ficheros y/o directorios locales existentes se han actual
 - *--include*: Incluye los ficheros en la sincronización. En este caso indicando "*" incluiría todo.
 - *--exclude*: Excluye ficheros en la sincronización. En este caso omite los ficheros "*.DS_Store" generados automáticamente en sistemas MacOS. Este parámetro es opcional.
 
-- Referencia AWS CLI S3 Sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
+> Referencia AWS CLI S3 Sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
 
 ```ps
 Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathBucketS3 "s3://BucketS3Name/Backup" -WorkPath "C:\PATH\"
@@ -299,7 +299,7 @@ Copiar ficheros y directorios del bucket S3 a local.
 
 Si realimos este proceso con el mismo usuario de AWS que estamos usando para la sincronización, será necesario otorgarle permisos adicionales para poder descargar ficheros y carpetas desde un bucket S3 a local.
 
-Referencia AWS CLI S3 cp: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
+> Referencia AWS CLI S3 cp: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
 
 ```
 aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
