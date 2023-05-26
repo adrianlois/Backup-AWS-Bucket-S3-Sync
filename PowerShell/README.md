@@ -26,12 +26,12 @@
 
 Script en Powershell para automatizar el proceso de sincronización de datos locales a un bucket S3 (Simple Storage Service) de Amazon Web Services a través de la interfaz de línea de comandos de AWSCLI.
 
-- Funciones específicas para montar y desmontar unidades externas USB donde se almacenarán las copias de Veeam Backup. 
-- Realizar una compresión 7zip cifrada de forma simétrica, usando adicionalmente un método de capas de ficheros comprimidos para almacenar la BBDD + key file de KeePassXC.
-- Sincronizar con AWS CLI los datos locales con el objeto (carpeta/directorio) del bucket S3.
-- Generar un fichero log de todo el proceso.
-- Enviar el fichero de log vía Email.
-- Enviar el fichero de log, contenido en formato de mensaje o ambas vía ChatBot de Telegram.
+▶ Funciones específicas para montar y desmontar unidades externas USB donde se almacenarán las copias de Veeam Backup.
+▶ Realizar una compresión 7zip cifrada de forma simétrica, usando adicionalmente un método de capas de ficheros comprimidos para almacenar la BBDD + key file de KeePassXC.
+▶ Sincronizar con AWS CLI los datos locales con el objeto (carpeta/directorio) del bucket S3.
+▶ Generar un fichero log de todo el proceso.
+▶ Enviar el fichero de log vía Email.
+▶ Enviar el fichero de log, contenido en formato de mensaje o ambas vía ChatBot de Telegram.
 
 ## Requisitos previos
 ### Política de permisos en AWS S3
