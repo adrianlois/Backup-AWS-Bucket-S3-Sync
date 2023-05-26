@@ -215,7 +215,7 @@ Esta función envía un correo del fichero de log adjunto y su contenido vía pr
 Send-EmailDocumentAndMessage -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
 ```
 
-![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync-Bash-PowerShell/master/screenshots/envio_email_backup_log_powershell.png)
+![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_email_backup_log_powershell.png)
 
 ### **Send-TelegramBotMessageAndDocument**
 
