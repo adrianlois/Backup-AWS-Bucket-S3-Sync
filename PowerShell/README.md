@@ -1,7 +1,7 @@
 # Backup AWS Bucket S3 Sync - PowerShell
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/Backup-AWS-Bucket-S3-Sync.png" width="320" />
+<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/backup_aws_bucket_s3_sync.png" width="320" />
 </div>
 
 ## Índice
@@ -215,7 +215,7 @@ Esta función envía un correo del fichero de log adjunto y su contenido vía pr
 Send-EmailDocumentAndMessage -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
 ```
 
-![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync-Bash-PowerShell/master/screenshots/envio_email_backup_log_gmail_powershell.png)
+![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync-Bash-PowerShell/master/screenshots/envio_email_backup_log_powershell.png)
 
 ### **Send-TelegramBotMessageAndDocument**
 
