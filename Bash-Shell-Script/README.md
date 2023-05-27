@@ -1,10 +1,18 @@
 # Backup AWS Bucket S3 Sync - Bash Shell Script
 
+<div align="center">
+<img src="https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/backup_aws_bucket_s3_sync.png" width="320" />
+</div>
+
+## Descripción
+
 Script en Bash para automatizar el proceso de sincronización de datos locales a un bucket S3 (Simple Storage Service) de Amazon Web Services a través de la interfaz de línea de comandos de AWS (AWSCLI).
 
-- 1. Se genera un fichero log de todo el proceso.
-- 2. Con awscli se sincronizan los datos locales con el objeto (carpeta/directorio) del bucket S3.
-- 3. Se envía el fichero de log vía Email desde el smtp de una cuenta de correo Gmail configurado en SSMTP.
+▶ Generar un fichero log de todo el proceso.
+
+▶ Sincronizar los datos locales con el objeto (carpeta/directorio) del bucket S3 usando AWSCLI.
+
+▶ Enviar el fichero de log vía Email desde el smtp de una cuenta de correo Gmail configurado en SSMTP.
 
 ## Requisitos previos
 ### Política de permisos en AWS S3  
