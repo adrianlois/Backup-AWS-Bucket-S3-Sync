@@ -95,7 +95,7 @@ Default output format [None]: json
 ```
 
 ## Descripción de Funciones: Backup-AWS-S3.ps1
-### **Set-USBDriveMount**
+### `Set-USBDriveMount`
 
 Esta función monta una unidad externa USB que será necesaria para almacenar la primera copia que se realizarán por parte de [Veeam Backup](https://www.veeam.com/es/windows-endpoint-server-backup-free.html). Esto podría aplicarse a cualquier otro software de backup.
 
@@ -110,7 +110,7 @@ Parámetros de la función.
 Set-USBDriveMount -DriveLetter "X" -Guid "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 ```
 
-### **Set-USBDriveUnmount**
+### `Set-USBDriveUnmount`
 
 Esta función se ejecutará al final de todo el proceso, desmontará la unidad externa USB montada anteriormente en el principio del flujo de ejecución de la función "Set-USBDriveMount".
 
