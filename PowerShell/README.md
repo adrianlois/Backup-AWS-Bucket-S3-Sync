@@ -122,7 +122,7 @@ Parámetro de la función.
 Set-USBDriveUnmount -Seconds "XXXX"
 ```
 
-### **Compress-7ZipEncryption**
+### `Compress-7ZipEncryption`
 
 Esta función comprime de forma cifrada en formato 7z (7zip) y usando un método por capas los ficheros relacionados con la BBDD (kdbx) + key file (keyx) de KeePassXC.
 
@@ -161,7 +161,7 @@ Compress-7ZipEncryption -PathKdbx "C:\PATH\file.kdbx" -PathKeyx "C:\PATH\file.ke
                         -PasswdFilePath "C:\PATH\PasswdBackup\" -WorkPathTemp "C:\PATH\Temp\"
 ```
 
-### **Invoke-BackupAWSS3**
+### `Invoke-BackupAWSS3`
 
 Esta función sincroniza los ficheros y directorios de una o varias rutas locales origen a un destino en un bucket S3 de AWS.
 
@@ -201,7 +201,7 @@ Verifica si uno o más ficheros y/o directorios locales existentes se han actual
 Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathBucketS3 "s3://BucketS3Name/Backup" -WorkPath "C:\PATH\"
 ```
 
-### **Send-EmailMessageAndDocument**
+### `Send-EmailMessageAndDocument`
 
 Esta función envía un correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook. 
 
@@ -222,7 +222,7 @@ Send-EmailDocumentAndMessage -UserFromEmail "userFrom@outlook.es" -UserToEmail "
 
 ![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_email_backup_log_powershell.png)
 
-### **Send-TelegramBotMessageAndDocument**
+### `Send-TelegramBotMessageAndDocument`
 
 Esta función envía una notificación del fichero de log y su contenido adjunto vía ChatBot de Telegram. Según los parámetros especificados en la función es posible enviar el fichero de log adjunto y también el tiempo de comienzo y tiempo total transcurrido del proceso de backup o enviar el fichero adjunto y también el contenido del fichero en formato de mensaje al ChatBot. 
 
@@ -281,7 +281,7 @@ Esto llamará a un fichero PowerShell .ps1 desde un fichero de proceso por lotes
 Si creamos una tarea programada en Windows (taskschd.msc) para una ejecución programada, la forma más efectiva sería establecer directamente un fichero de proceso por lotes .bat y que este llame al fichero PowerShell .ps1 donde cargará e invocará al resto de funciones.
 
 ## USBDrive-MountUnmount
-### Set-USBDriveMountUnmount.ps1
+### `Set-USBDriveMountUnmount.ps1`
 
 Es posible que el proceso de montaje y desmontaje del dispositivo USB externo queramos independizarlo, ya sea por factores que influyen en la duración del tiempo de montaje y simplemente no coincidan por solapamiento con el flujo de ejecución del resto de funciones. 
 
@@ -291,12 +291,12 @@ Podemos utlizar el script *Set-USBDriveMountUnmount.ps1* de forma indpendiente p
 
 Si optamos por esta opción, será necesario crear una nueva tarea programada dedicada a la ejecucación de este script para controlar los tiempos de espera en el montaje y desmontaje del volumen. 
 
-### USBDrive-UnmountStartSystem.bat
+### `USBDrive-UnmountStartSystem.bat`
 
 Este script se llamará desde una nueva tarea programada en la cual los desencadenadores de ejecución serían: "cada inicio nuevo de sistema" y "primer inicio de sesión". Asegurando así que la unidad externa USB no se monte de forma automática por el sistema tras estos eventos.
 
 ## PasswdBackup
-### New-PasswdFile.ps1
+### `New-PasswdFile.ps1`
 
 Este script automatizará el proceso de creación de los ficheros de password cifradas que serán utilizados en las funciones *Compress-7ZipEncryption* y *Send-EmailDocumentAndMessage*.
 
