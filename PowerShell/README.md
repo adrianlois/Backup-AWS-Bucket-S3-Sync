@@ -167,8 +167,8 @@ Esta función sincroniza los ficheros y directorios de una o varias rutas locale
 
 Parámetros de la función.
 
-- *SourcePathLocalData*: Ruta absoluta del fichero "PathLocalData.txt", en este fichero se especifican los directorios donde será el origen de sincronización al bucket S3. Especificar los paths necesarios en  nuevas líneas.
-- *RemotePathBucketS3*: Ruta destino del bucket S3 donde se almacenerá y realizará la sincronización de paths locales especificados en el fichero PathLocalData.txt.  
+- *SourcePathLocalData*: Ruta absoluta del fichero *PathLocalData.txt*, en este fichero se especifican los directorios donde será el origen de sincronización al bucket S3. Especificar los paths necesarios en  nuevas líneas.
+- *RemotePathBucketS3*: Ruta destino del bucket S3 donde se almacenerá y realizará la sincronización de paths locales especificados en el fichero *PathLocalData.txt*.  
 - *WorkPath*: Ruta absoluta raíz donde se realizará y tomará de referencia para el proceso de sincronización así como la creación del fichero de log que se creará en la tarea de sincronización.
 
 ```ps
@@ -285,7 +285,7 @@ Si creamos una tarea programada en Windows (taskschd.msc) para una ejecución pr
 
 Es posible que el proceso de montaje y desmontaje del dispositivo USB externo queramos independizarlo, ya sea por factores que influyen en la duración del tiempo de montaje y simplemente no coincidan por solapamiento con el flujo de ejecución del resto de funciones. 
 
-Esto sería una alternativa de control independiente a las funciones *Set-USBDriveMount* y *Set-USBDriveUnmount* indicadas en script principal "Backup-AWS-S3.ps1".
+Esto sería una alternativa de control independiente a las funciones *Set-USBDriveMount* y *Set-USBDriveUnmount* indicadas en script principal *Backup-AWS-S3.ps1*.
 
 Podemos utlizar el script *Set-USBDriveMountUnmount.ps1* de forma indpendiente para el proceso de montaje y desmontaje del dispositivo USB externo utilizado para el alamacenamiento de copias de Veeam Backup o el gestor de copias que usemos.
 
