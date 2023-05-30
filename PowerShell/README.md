@@ -283,7 +283,7 @@ Si creamos una tarea programada en Windows (taskschd.msc) para una ejecución pr
 ## USBDrive-MountUnmount
 ### Set-USBDriveMountUnmount.ps1
 
-Podemos usar el script *Set-USBDriveMountUnmount.ps1* en el caso de no querer realizar en el mismo flujo de ejecución el proceso de montaje y desmontaje del dispositivo externo USB utilizado para el alamacenamiento de copias de Veeam Backup.
+Podemos usar el script *Set-USBDriveMountUnmount.ps1* en el caso de no querer realizar en el mismo flujo de ejecución el proceso de montaje y desmontaje del dispositivo USB externo, utilizado para el alamacenamiento de copias de Veeam Backup.
 
 Será necesario crear otra tarea programada para controlar los tiempos de espera en el montaje y desmontaje del volumen. 
 
