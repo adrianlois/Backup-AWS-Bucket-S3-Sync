@@ -283,11 +283,13 @@ Si creamos una tarea programada en Windows (taskschd.msc) para una ejecución pr
 ## USBDrive-MountUnmount
 ### Set-USBDriveMountUnmount.ps1
 
-Podemos usar el script *Set-USBDriveMountUnmount.ps1* en el caso de no querer realizar en el mismo flujo de ejecución el proceso de montaje y desmontaje del dispositivo USB externo, utilizado para el alamacenamiento de copias de Veeam Backup.
-
-Será necesario crear otra tarea programada para controlar los tiempos de espera en el montaje y desmontaje del volumen. 
+Es posible que el proceso de montaje y desmontaje del dispositivo USB externo queramos independizarlo, ya sea por factores que influyen en la duración del tiempo de montaje y simplemente no coincidan por solapamiento con el flujo de ejecución del resto de funciones. 
 
 Esto sería una alternativa de control independiente a las funciones *Set-USBDriveMount* y *Set-USBDriveUnmount* indicadas en script principal Backup-AWS-S3.ps1.
+
+Podemos utlizar el script *Set-USBDriveMountUnmount.ps1* de forma indpendiente para el proceso de montaje y desmontaje del dispositivo USB externo utilizado para el alamacenamiento de copias de Veeam Backup o el gestor de copias que usemos.
+
+Si optamos por esta opción, será necesario crear una nueva tarea programada dedicada a la ejecucación de este script para controlar los tiempos de espera en el montaje y desmontaje del volumen. 
 
 ### USBDrive-UnmountStartSystem.bat
 
