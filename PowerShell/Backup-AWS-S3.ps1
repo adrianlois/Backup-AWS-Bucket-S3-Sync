@@ -95,9 +95,9 @@ Function Compress-7ZipEncryption {
 Function Invoke-BackupAWSS3 {
     [CmdletBinding()]
     Param (
-        [string]$SourcePathLocalData,
-        [string]$RemotePathBucketS3,
-        [string]$WorkPath
+        [String]$SourcePathLocalData,
+        [String]$RemotePathBucketS3,
+        [String]$WorkPath
     )
 
     # Fecha y hora.
@@ -136,7 +136,7 @@ J:\PATH_4\Musica
         $PathLocalData = $_
 
         # Mantener la misma estructura jerárquica de directorios en la subida al bucket S3 cuando se especifacan múltiples paths locales en PathLocalData.txt.
-        $pathRelativeBucketS3  = ($PathLocalData.Substring(2) -Replace '\\', '/')
+        $pathRelativeBucketS3  = ($PathLocalData.SubString(2) -Replace '\\', '/')
 
         aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $pathRelativeBucketS3)" --sse AES256 --delete --include "*" --exclude "*.DS_Store" | `
         # Eliminar líneas del proceso de sincronización en el output del backupLog y quedarse solo con las líneas de los cambios de ficheros y directorios.
@@ -150,7 +150,7 @@ J:\PATH_4\Musica
 
     Write-Output "# # # # # # # # # # # # # # # # # # # #" | Out-File -FilePath $backupLog -Append
     $endTime = (Get-Date)
-    $elapsedTime = $($endTime-$startTime).ToString().Substring(0,8)
+    $elapsedTime = $($endTime-$startTime).ToString().SubString(0,8)
     # Resetear $currentDateTime para obtener la hora actual hasta este momento del proceso de backup.
     # Establecer $currentDateTime en este punto como variable de ámbito de script que también será usada en la función Send-EmailLocalFile.
     $script:currentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
@@ -201,10 +201,10 @@ Function Send-EmailMessageAndDocument {
 Function Send-TelegramBotMessageAndDocument {
     [CmdletBinding()]
     Param (
-        $BotToken,
-        $ChatID,
-        [switch]$SendMessage,
-        [switch]$SendDocument
+        [String]$BotToken,
+        [String]$ChatID,
+        [Switch]$SendMessage,
+        [Switch]$SendDocument
     )
 
     # Si está presente el flag -SendMessage está presente: enviar todo el contenido del fichero backupLog como mensaje de texto en chatBot.
