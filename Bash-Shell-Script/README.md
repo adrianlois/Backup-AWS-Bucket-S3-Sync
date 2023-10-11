@@ -1,7 +1,7 @@
 # Backup AWS Bucket S3 Sync - Bash Shell Script
 
 <div align="center">
-<img src="../screenshots/backup_aws_bucket_s3_sync_logo.png" width="350" />
+  <img src="../screenshots/backup_aws_bucket_s3_sync_logo.png" width="350" />
 </div>
 
 ## Descripción
