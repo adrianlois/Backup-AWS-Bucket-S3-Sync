@@ -6,7 +6,7 @@ fechaActual="$(date +'%d-%m-%Y')"
 
 # Email
 envioEmailCuentaUsuario="emailCuenta@gmail.com"
-asuntoEmail="[Backup - AWS Bucket S3]"
+asuntoEmail="[Backup - AWS S3 Bucket]"
 cuerpoEmail="cuerpoEmail"
 
 # Paths
