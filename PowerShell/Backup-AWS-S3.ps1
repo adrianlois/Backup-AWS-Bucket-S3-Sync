@@ -9,7 +9,7 @@ Function Set-USBDriveMount {
         [String]$Guid
     )
 
-    # $DriveLetter variable de ámbito de script que también será usadas en Set-USBDriveUnmount.
+    # $DriveLetter variable de ámbito de script que también será usada en Set-USBDriveUnmount.
 	$script:DriveLetter = $DriveLetter
 
     # Se comprueba si la unidad está previamente montada, sino lo está se monta.
@@ -47,7 +47,7 @@ Function Compress-7ZipEncryption {
         [String]$WorkPathTemp
     )
 
-    # $PasswdFilePath variable en ámbito de script que también será usada Send-EmailLocalFile.
+    # $PasswdFilePath variable en ámbito de script que también será usada en Send-EmailMessageAndFile.
     $script:PasswdFilePath = $PasswdFilePath
 
     # Paths de los ficheros de passwords 7zip. Almacenar la cadena segura de la contraseña en un puntero de memoria.
@@ -102,7 +102,7 @@ Function Invoke-BackupAWSS3 {
 
     # Fecha y hora.
     $currentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
-    # $backupLog variable en ámbito de script del fichero de log con fecha actual que también será usada Send-EmailLocalFile y Send-TelegramLocalFile.
+    # $backupLog variable en ámbito de script del fichero de log con fecha actual que también será usada en Send-EmailMessageAndFile y Send-TelegramLocalFile.
     $script:backupLog = $WorkPath + "Backup_" + (Get-Date -uformat "%d-%m-%Y") + ".log"
 
     # Comprobar y eliminar si existe un fichero de log anterior.
@@ -129,7 +129,7 @@ J:\PATH_4\Musica
     # Mostrar fecha y hora del comienzo del proceso de backup al princpio del log.
     $startTime = (Get-Date)
     Write-Output "Backup comienza: $currentDateTime" | Out-File -FilePath $backupLog -Append
-    Write-Output "# # # # # # # # # # # # # # # # # # # #`n" | Out-File -FilePath $backupLog -Append
+    Write-Output "___________________________________`n" | Out-File -FilePath $backupLog -Append
 
     # Sincronizar datos locales al bucket S3. Importar e iterar las líneas con los paths locales establecidos en el fichero PathLocalData.txt.
     $TXTPathLines | Foreach-Object {
@@ -148,18 +148,18 @@ J:\PATH_4\Musica
         }
     }
 
-    Write-Output "# # # # # # # # # # # # # # # # # # # #" | Out-File -FilePath $backupLog -Append
+    Write-Output "___________________________________" | Out-File -FilePath $backupLog -Append
     $endTime = (Get-Date)
     $elapsedTime = $($endTime-$startTime).ToString().SubString(0,8)
     # Resetear $currentDateTime para obtener la hora actual hasta este momento del proceso de backup.
-    # Establecer $currentDateTime en este punto como variable de ámbito de script que también será usada en la función Send-EmailLocalFile.
-    $script:currentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
+    # Establecer $currentDateTime en este punto como variable de ámbito de script que también será usada en Send-EmailMessageAndFile.
+    $currentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
     Write-Output "Backup finaliza: $currentDateTime`n" | Out-File -FilePath $backupLog -Append
     Write-Output "Tiempo total transcurrido: $elapsedTime" | Out-File -FilePath $backupLog -Append
 }
 
 # Enviar correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook.
-Function Send-EmailMessageAndDocument {
+Function Send-EmailMessageAndFile {
     [CmdletBinding()]
     Param (
         [String]$UserFromEmail,
@@ -198,13 +198,13 @@ Function Send-EmailMessageAndDocument {
 }
 
 # Enviar notificación del fichero de log y su contenido adjunto vía ChatBot de Telegram.
-Function Send-TelegramBotMessageAndDocument {
+Function Send-TelegramBotMessageAndFile {
     [CmdletBinding()]
     Param (
         [String]$BotToken,
         [String]$ChatID,
         [Switch]$SendMessage,
-        [Switch]$SendDocument
+        [Switch]$SendFile
     )
 
     # Si está presente el flag -SendMessage está presente: enviar todo el contenido del fichero backupLog como mensaje de texto en chatBot.
@@ -223,8 +223,8 @@ Function Send-TelegramBotMessageAndDocument {
         $resultSendMessage = Invoke-RestMethod @invokeRestMethodSplat
     }
 
-    # Si está presente el flag -SendDocument: enviar el fichero de backupLog como adjunto.
-    if ($SendDocument) {
+    # Si está presente el flag -SendFile: enviar el fichero de backupLog como adjunto.
+    if ($SendFile) {
         # Enviar también la primera y última línea del contenido del fichero donde se indica cuando comienza y el tiempo total del backup como mensaje de texto en el chatBot.
         if (-not $SendMessage) {
             #$firstLine = Get-Content -Path $backupLog | Select-Object -First 1
@@ -258,12 +258,12 @@ Function Send-TelegramBotMessageAndDocument {
             ErrorAction = 'Stop'
         }
 
-        $resultSendDocument = Invoke-RestMethod @invokeRestMethodSplat
+        $resultSendFile = Invoke-RestMethod @invokeRestMethodSplat
     }
 
      # Devolver resultados en función de los flags indicados.
-     if ($SendDocument -and $SendMessage) { return $resultSendMessage, $resultSendDocument }
-     elseif ($SendDocument) { return $resultSendShortMessage, $resultSendDocument }
+     if ($SendFile -and $SendMessage) { return $resultSendMessage, $resultSendFile }
+     elseif ($SendFile) { return $resultSendShortMessage, $resultSendFile }
      elseif ($SendMessage) { return $resultSendMessage }
 }
 
@@ -276,8 +276,8 @@ Compress-7ZipEncryption -PathKdbx "C:\PATH\file.kdbx" -PathKeyx "C:\PATH\file.ke
 
 Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathBucketS3 "s3://BucketS3Name/Backup" -WorkPath "C:\PATH\"
 
-Send-EmailMessageAndDocument -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
+Send-EmailMessageAndFile -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
 
-Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendDocument
+Send-TelegramBotMessageAndFile -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendFile
 
 Set-USBDriveUnmount -Seconds "XXXX"
