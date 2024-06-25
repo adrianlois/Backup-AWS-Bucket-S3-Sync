@@ -180,7 +180,7 @@ Function Send-EmailMessageAndFile {
     $ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($secPasswdEmail)
 
     # Asunto y cuerpo email.
-    $subjectEmail = "[Backup - AWS S3 Bucket]"
+    $subjectEmail = "[Backup] AWS S3 Bucket"
     $bodyEmail = [System.IO.File]::ReadAllText($backupLog)
     # Alternativas usando Get-Content.
     # $bodyEmail = Get-Content "$backupLog" | Out-String
