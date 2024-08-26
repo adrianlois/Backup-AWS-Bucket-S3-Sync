@@ -171,7 +171,7 @@ Compress-7ZipEncryption -PathKdbx "C:\PATH\file.kdbx" -PathKeyx "C:\PATH\file.ke
 
 Esta función sincroniza los ficheros y directorios de una o varias rutas locales origen a un destino en un bucket S3 de AWS.
 
-Parámetros de la función.
+Parámetros de la función:
 
 - *SourcePathLocalData*: Ruta absoluta del fichero *PathLocalData.txt*, en este fichero se especifican los directorios donde será el origen de sincronización al bucket S3. Especificar los paths necesarios en  nuevas líneas.
 - *RemotePathBucketS3*: Ruta destino del bucket S3 donde se almacenerá y realizará la sincronización de paths locales especificados en el fichero *PathLocalData.txt*.  
