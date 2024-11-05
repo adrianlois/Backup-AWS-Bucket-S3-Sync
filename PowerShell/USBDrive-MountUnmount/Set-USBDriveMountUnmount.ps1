@@ -11,15 +11,15 @@ Function Set-USBDriveMountUnmount {
     $idDrive = (Get-Volume | Where-Object {$_.DriveLetter -eq "$DriveLetter"}).UniqueId
     if (-not ($idDrive)) {
         # Montar unidad externa
-        $mount = '"' + $DriveLetter + ':' + '" "' + '\\?\Volume{' + $Guid + '}"'
-        Invoke-Expression -Command "mountvol $mount"
+        $Mount = '"' + $DriveLetter + ':' + '" "' + '\\?\Volume{' + $Guid + '}"'
+        Invoke-Expression -Command "mountvol $Mount"
     }
 	# Tiempo de espera con la unidad previamente montada en USBDrive-Mount.
     Start-Sleep -Seconds $Seconds
 
     # Desmontar unidad externa.
-    $unmount = '"' + $DriveLetter + ':' + '"'
-    Invoke-Expression -Command "mountvol $unmount /D"
+    $Unmount = '"' + $DriveLetter + ':' + '"'
+    Invoke-Expression -Command "mountvol $Unmount /P"
 }
 
 Set-USBDriveMountUnmount -DriveLetter "X" -Guid "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" -Seconds "XXXX"

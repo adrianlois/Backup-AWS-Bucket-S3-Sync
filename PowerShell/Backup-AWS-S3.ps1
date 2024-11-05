@@ -16,8 +16,8 @@ Function Set-USBDriveMount {
     $idDrive = (Get-Volume | Where-Object {$_.DriveLetter -eq "$DriveLetter"}).UniqueId
     if (-not ($idDrive)) {
         # Montar unidad externa
-        $mount = '"' + $DriveLetter + ':' + '" "' + '\\?\Volume{' + $Guid + '}"'
-        Invoke-Expression -Command "mountvol $mount"
+        $Mount = '"' + $DriveLetter + ':' + '" "' + '\\?\Volume{' + $Guid + '}"'
+        Invoke-Expression -Command "mountvol $Mount"
     }
 }
 
@@ -31,8 +31,8 @@ Function Set-USBDriveUnmount {
     Start-Sleep -Seconds $Seconds
 
     # Desmontar unidad externa.
-    $unMount = '"' + $DriveLetter + ':' + '"'
-    Invoke-Expression -Command "mountvol $unMount /D"
+    $Unmount = '"' + $DriveLetter + ':' + '"'
+    Invoke-Expression -Command "mountvol $Unmount /P"
 }
 
 # Comprimir de forma cifrada y usando un método por capas los ficheros relacionados con la BBDD + key file de KeePassXC.
