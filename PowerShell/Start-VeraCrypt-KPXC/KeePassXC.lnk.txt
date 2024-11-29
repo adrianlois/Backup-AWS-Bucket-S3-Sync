@@ -1,0 +1,1 @@
+"C:\Program Files\PowerShell\7\pwsh.exe" -WindowStyle Hidden -ExecutionPolicy Bypass -File "LOCAL_PATH\Start-VeraCrypt-KPXC.ps1"

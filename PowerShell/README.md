@@ -13,17 +13,22 @@
     - [Política de permisos en AWS S3](#política-de-permisos-en-aws-s3)
     - [Identity and Access Management (IAM)](#identity-and-access-management-iam)
     - [Configuración "Access Key" y "Secret Access key"](#configuración-access-key-y-secret-access-key)
+    - [Configuración de VeraCrypt para el uso de KeePassXC](#configuración-de-veracrypt-para-el-uso-de-keepassxc)
   - [Descripción de Funciones: Backup-AWS-S3.ps1](#descripción-de-funciones-backup-aws-s3ps1)
     - [Set-USBDriveMount](#set-usbdrivemount)
     - [Set-USBDriveUnmount](#set-usbdriveunmount)
+    - [Set-VeraCryptMount](#set-veracryptmount)
+    - [Set-VeraCryptUnmount](#set-veracryptunmount)
     - [Compress-7ZipEncryption](#compress-7zipencryption)
     - [Invoke-BackupAWSS3](#invoke-backupawss3)
     - [Send-EmailMessageAndDocument](#send-emailmessageanddocument)
     - [Send-TelegramBotMessageAndDocument](#send-telegrambotmessageanddocument)
   - [Backup-AWS-S3-Trigger.bat](#backup-aws-s3-triggerbat)
   - [USBDrive-MountUnmount](#usbdrive-mountunmount)
-    - [Set-USBDriveMountUnmount.ps1](#set-usbdrivemountunmountps1)
+    - [Invoke-USBDriveMountUnmount.ps1](#invoke-usbdrivemountunmountps1)
     - [USBDrive-UnmountStartSystem.bat](#usbdrive-unmountstartsystembat)
+  - [Start-VeraCrypt-KPXC](#start-veracrypt-kpxc)
+    - [Start-VeraCrypt-KPXC.ps1](#start-veracrypt-kpxcps1)
   - [PasswdBackup](#passwdbackup)
     - [New-PasswdFile.ps1](#new-passwdfileps1)
   - [Recuperación Backup: S3 a Local](#recuperación-backup-s3-a-local)
@@ -34,7 +39,9 @@ Script en Powershell para automatizar el proceso de sincronización de datos loc
 
 ▶ Funciones específicas para montar y desmontar unidades externas USB donde se almacenarán las copias de Veeam Backup.
 
-▶ Realizar compresiones 7zip cifrada de forma simétrica, usando adicionalmente un método de capas de ficheros comprimidos para almacenar la BBDD + key file de KeePassXC.
+▶ Funciones para gestionar volúmenes virtuales cifrados que aíslan de forma independiente los archivos kdbx y keyx de KeePassXC, manteniéndolos fuera del alcance del sistema operativo.
+
+▶ Realizar compresiones 7zip cifrada de forma simétrica, usando adicionalmente un método de capas de ficheros comprimidos para almacenar la BBDD (kdbx) y el fichero con la clave de seguridad adicional (keyx) de KeePassXC.
 
 ▶ Sincronizar con AWS CLI los datos locales con el objeto (carpeta/directorio) del bucket S3.
 
@@ -47,7 +54,8 @@ Script en Powershell para automatizar el proceso de sincronización de datos loc
 ## Requisitos previos
 ### Política de permisos en AWS S3
 
-> Por seguridad en la automatización de este tipo de "backups" (o mejor dicho sincronización en este caso) NO se recomienda usar un usuario raíz y con acceso a la consola de AWS.
+> [!NOTE]
+> Por seguridad en la automatización de sincronización de este tipo de "backups" NO se recomienda usar un usuario raíz y con acceso a la consola de AWS.
 
 Se creará un usuario específico para este fin únicamente con los permisos y accesos necesarios.
 
@@ -90,7 +98,10 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 
 3. [Instalación de AWSCLI en Windows](https://docs.aws.amazon.com/es_es/cli/latest/userguide/install-windows.html).
 
-4. Establecer las access keys en AWSCLI. En un entorno Windows estas keys quedarán almacenadas en el fichero %userprofile%\.aws\credentials.
+4. Establecer las access keys en AWSCLI. En un entorno Windows estas keys quedarán almacenadas en el fichero "%userprofile%\.aws\credentials" y la configuración de región en "%userprofile%\.aws\config". 
+
+> [!NOTE]
+> Aunque estas claves sean accesibles para el usuario local, no representan un riesgo, ya que los permisos establecidos solo permiten subir archivos al bucket S3, sin opción de descargarlos.
 
 ```
 $ aws configure
@@ -100,6 +111,34 @@ Default region name [None]: eu-south-2
 Default output format [None]: json
 ```
 
+### Configuración de VeraCrypt para el uso de KeePassXC
+
+En un gestor de contraseñas local como [KeePassXC](https://keepassxc.org/download/#windows), lo habitual es almacenar localmente la base de datos (kdbx) junto con la clave de seguridad adicional (keyx). Aunque el archivo kdbx es seguro, si el sistema se compromete, un atacante podría acceder a estos archivos. En caso de un ataque de Ransomware que cifre esta información, existe el backup síncrono en la nube para su recuperación. 
+
+No obstante, este enfoque añade una capa extra de aislamiento (sandboxing) para proteger estos archivos. Un posible atacante o ransomware, en un primer momento, solo tendría acceso a los archivos de contenedores en formato .hc de VeraCrypt, los cuales ya están protegidos con un cifrado simétrico AES usando una contraseña robusta.
+
+Con [VeraCrypt](https://www.veracrypt.fr/en/Downloads.html), se crean dos contenedores cifrados en volúmenes virtuales independientes: uno para el archivo kdbx (kpxc_kdbx.hc) y otro para el keyx (kpxc_keyx.hc). Cada uno protegido con un cifrado simétrico AES y una contraseña robusta. Estos volúmenes solo se montan cuando se inicia KeePassXC, asignando una letra de unidad a cada uno, y se desmontan al cerrar KeePassXC, quedando inaccesibles cuando no están en uso y fuera del alcance directo del sistema operativo.
+
+Todo este proceso se automatiza con el script, que se invoca a través de un acceso directo configurando la ruta de destino para llamar a este script.
+
+Para un uso habitual de KeePassXC. El script [Start-VeraCrypt-KPXC.ps1](#start-veracrypt-kpxcps1) automatiza todo el proceso. Se invoca a través de un acceso directo, estableciendo la ruta de destino para llamar a dicho script.
+
+**Configuración de las preferencias de VeraCrypt:**
+
+- Opciones de montaje predeterminadas:
+  - Desactivar: Montar volúmenes como medios extraíbles (https://veracrypt.eu/en/Removable%20Medium%20Volume.html)
+- VeraCrypt en segundo plano:
+  - Activar: Salir cuando no haya volúmenes montados.
+- Desmontar automáticamente. Desmontar todo cuando: 
+  - Activar: El usuario cierra sesión.
+  - Activar: La sesión del usuario es bloqueada.
+  - Activar: Cuando se activa el salvapantallas.
+  - Activar: Forzar desmontaje automático aunque el volumen tenga archivos abiertos.
+- Activar: No mostrar el mensaje de espera mientras se realizan operaciones.
+- Caché de contraseñas: 
+  - Activar: Eliminar contraseñas guardadas al salir.
+  - Activar: Eliminar contraseñas guardadas al desmontar automáticamente.
+
 ## Descripción de Funciones: Backup-AWS-S3.ps1
 ### Set-USBDriveMount
 
@@ -107,7 +146,7 @@ Esta función monta una unidad externa USB que será necesaria para almacenar la
 
 Para conocer y obtener previamente el GUID de un volumen ejecutamos en una consola "mountvol".
 
-Parámetros de la función.
+**Parámetros de la función:**
 
 - *DriveLetter*: Letra de asignación de la unidad o volumen a montar en el sistema.
 - *Guid*: Indentificador global correspondiente al volumen de disco correspondiente a la unidad externa a montar en el sistema.
@@ -120,7 +159,7 @@ Set-USBDriveMount -DriveLetter "X" -Guid "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 
 Esta función se ejecutará al final de todo el proceso, desmontará la unidad externa USB montada anteriormente en el principio del flujo de ejecución de la función "Set-USBDriveMount".
 
-Parámetro de la función.
+**Parámetro de la función:**
 
 - *Seconds*: Tiempo en segundos que estará la unidad externa USB montada antes de ser desmontada del sistema. 
 
@@ -128,13 +167,61 @@ Parámetro de la función.
 Set-USBDriveUnmount -Seconds "XXXX"
 ```
 
+### Set-VeraCryptMount
+
+Esta función monta los volúmenes .hc de VeraCrypt que almacenan los archivos kdbx y keyx de KeePassXC. Luego, se invoca la función [Compress-7ZipEncryption](#compress-7zipencryption) y, una vez finalizado ese proceso, se llama a la función [Set-VeraCryptUnmount](#set-veracryptunmount).
+
+Crear los ficheros con la password cifrada que se usarán para montar los volúmenes de VeraCrypt.
+
+```ps
+"Passw0rd.VCKdbx" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\PasswdVCKdbx"
+"Passw0rd.VCKeyx" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\PasswdVCKeyx"
+```
+
+**Parámetros de la función:**
+
+- *PasswdFilePath*: Ruta de la carpeta donde se guardan los archivos que contienen las contraseñas cifradas utilizadas en el proceso de compresión.
+- *VCFilePath*: Ruta de los archivos de volúmenes .hc de VeraCrypt.
+- *DriveLetterVCKdbx*: Letra de unidad que se asigna al montar el volumen donde se almacena el fichero kdbx.
+- *DriveLetterVCKeyx*: Letra de unidad que se asigna al montar el volumen donde se almacena el fichero keyx. 
+
+```ps
+Set-VeraCryptMount -PasswdFilePath "C:\PATH\PasswdBackup\" -VCFilePath "C:\PATH\VeraCrypt\" `
+                   -DriveLetterVCKdbx "Y:" -DriveLetterVCKeyx "Z:"
+```
+
+**Parámetros de montaje VeraCrypt.exe:**
+- */volume*: Especificar la ruta del volumen. En este caso, el fichero contenedor .hc.
+- */letter*: Asigna una letra de unidad disponible al volumen establecido. 
+- */password*: Establece la password para descifrar el volumen.
+- */protectMemory*: Activa un mecanismo que protege la memoria del proceso VeraCrypt para que otros procesos que no sean administradores no puedan acceder a ella.
+- */wipecache*: Borra todas las contraseñas almacenadas en caché en la memoria del controlador.
+- */nowaitdlg*: No muestra el diálogo de espera mientras se realizan operaciones como montar volúmenes.
+- */quit*: Realiza las acciones solicitadas en los parámetros anteriores sin mostrar la vetana de VeraCrypt y finalizar la aplicación al terminar.
+
+> Referencia VeraCrypt (Command Line): https://veracrypt.eu/en/Command%20Line%20Usage.html
+
+### Set-VeraCryptUnmount
+
+Al finalizar el proceso de compresión y cifrado de los archivos relacionados con la base de datos (kdbx) y el archivo de clave (keyx) de KeePassXC en la función [Compress-7ZipEncryption](#compress-7zipencryption), esta función desmonta los volúmenes de VeraCrypt y finaliza los procesos "VeraCrypt.exe" y "KeePassXC", que permanecen en segundo plano tras haberse iniciado previamente con la función [Set-VeraCryptMount](#set-veracryptmount) o al comprobar que ya estaban montados manualmente mediante el script [Start-VeraCrypt-KPXC.ps1](#start-veracrypt-kpxc).
+
+**Parámetros de desmontaje VeraCrypt.exe:**
+- */dismount*: Si no especifica ninguna letra de unidad, desmontará todos los volúmenes de VeraCrypt montados actualmente.
+- */force*: Fuerza el desmontaje aunque tenga archivos en uso.  
+- */wipecache*: Borra todas las contraseñas almacenadas en caché en la memoria del controlador.
+- */history n*: Deshabilita guardar el historial de volúmenes montados
+- */quit*: Realiza las acciones solicitadas en los parámetros anteriores sin mostrar la vetana de VeraCrypt y finalizar la aplicación al terminar.
+
+> Referencia VeraCrypt (Command Line): https://veracrypt.eu/en/Command%20Line%20Usage.html
+
 ### Compress-7ZipEncryption
 
 Esta función comprime de forma cifrada en formato 7z (7zip) y usando un método por capas los ficheros relacionados con la BBDD (kdbx) + key file (keyx) de KeePassXC.
 
-¿Por qué usar el módulo 7zip y no Compress-Archive en formato Zip (System.IO.Compression.ZipArchive)?
-
-Respuesta: https://www.sans.org/blog/powershell-7-zip-module-versus-compress-archive-with-encryption/
+> [!NOTE]
+> **¿Por qué usar el módulo 7zip y no Compress-Archive en formato Zip (System.IO.Compression.ZipArchive)?**
+> 
+> https://www.sans.org/blog/powershell-7-zip-module-versus-compress-archive-with-encryption/
 
 1. Instalar módulo 7Zip4Powershell.
 ```ps
@@ -142,9 +229,7 @@ Install-Module -Name 7Zip4Powershell
 Import-Module -Name 7Zip4Powershell
 ```
 
-2. Crear los ficheros con la password cifrada que se usarán para todas compresiones de estos ficheros. Deben respetarse los nombres de salida para que coincida con el de la función.
-
-En caso de que se necesite establecer nombres distintos será necesario cambiarlos manualmente en la propia función.
+1. Crear los ficheros con la password cifrada que se usarán para todas compresiones de estos ficheros.
 
 ```ps
 "Passw0rd.Kdbx" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\Passwd7zKdbx"
@@ -152,26 +237,25 @@ En caso de que se necesite establecer nombres distintos será necesario cambiarl
 "Passw0rd.Kpxc" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\Passwd7zKpxc"
 ```
 
-Parámetros de la función.
+**Parámetros de la función:**
 
-- *PathKdbx*: Ruta del fichero de la BBDD de KeePassXC .kdbx
-- *PathKeyx*: Ruta del fichero de la key file de KeePassXC .keyx, en el caso de que se hubiera establecido en la creación de la BBDD.
+- *PathKdbx*: Ruta del fichero de la BBDD kdbx de KeePassXC.
+- *PathKeyx*: Ruta del fichero de de seguridad adicional keyx de KeePassXC.
 - *File7zKpxc*: Ruta local del fichero final ya comprimido.
 - *RemoteFile7zKpxc*: Ruta remota donde se moverá del fichero final ya comprimido.
-- *PasswdFilePath*: Ruta de la carpeta donde se guardarán los ficheros que almacenan las contraseñas cifradas usadas en el proceso de compresión.
 - *WorkPathTemp*: Ruta temporal donde se realizará el proceso aislado de compresión. Se recomienda crear una carpeta Temp en el mismo directorio donde se ejecute el script.
 
 ```ps
-Compress-7ZipEncryption -PathKdbx "C:\PATH\file.kdbx" -PathKeyx "C:\PATH\file.keyx" `
-                        -File7zKpxc "C:\PATH\file.7z" -RemoteFile7zKpxc "H:\PATH\Datos" `
-                        -PasswdFilePath "C:\PATH\PasswdBackup\" -WorkPathTemp "C:\PATH\Temp\"
+Compress-7ZipEncryption -PathKdbx "Y:\file.kdbx" -PathKeyx "Z:\file.keyx" `
+                        -File7zKpxc "C:\PATH\file.7z" -RemoteFile7zKpxc "H:\PATH\Datos\" `
+                        -WorkPathTemp "C:\PATH\Temp\"
 ```
 
 ### Invoke-BackupAWSS3
 
 Esta función sincroniza los ficheros y directorios de una o varias rutas locales origen a un destino en un bucket S3 de AWS.
 
-Parámetros de la función:
+**Parámetros de la función:**
 
 - *SourcePathLocalData*: Ruta absoluta del fichero *PathLocalData.txt*, en este fichero se especifican los directorios donde será el origen de sincronización al bucket S3. Especificar los paths necesarios en  nuevas líneas.
 - *RemotePathBucketS3*: Ruta destino del bucket S3 donde se almacenerá y realizará la sincronización de paths locales especificados en el fichero *PathLocalData.txt*.  
@@ -181,7 +265,7 @@ Parámetros de la función:
 Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathBucketS3 "s3://BucketS3Name/Backup" -WorkPath "C:\PATH\"
 ```
 
-**Fichero PathLocalData.txt**
+**Fichero PathLocalData.txt:**
 
 Formato de ejemplo de las rutas locales establecidas para realizar el proceso de sincronización.
 
@@ -192,7 +276,7 @@ H:\PATH_3\Videos
 J:\PATH_4\Musica
 ```
 
-**aws s3 sync**
+**Parámetros de sincronización aws s3 sync (Local a Remoto):**
 
 Verifica si uno o más ficheros y/o directorios locales existentes se han actualizado comprobando su nombre, tamaño y el timestamp. Actualmente no creo que compruebe los cambios en los hashes del fichero.
 
@@ -211,6 +295,7 @@ Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathB
 
 Esta función envía un correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook. 
 
+> [!NOTE]
 > Por seguridad Gmail ya no permite esta opción. https://support.google.com/accounts/answer/6010255
 
 1. Crear el fichero con la password cifrada que será usada para la autenticación de la cuenta de correo de Outlook. Deben respetarse los nombres de salida para que coincida con el de la función.
@@ -252,12 +337,14 @@ Establecer una imagen a mostrar para para el bot.
 /getid
 ```
 
-Parámetros de la función. Diferencias entre establecer **SendMessage** y **SendDocument**.
+**Parámetros de la función:**
 
 - *BotToken*: Token del bot generado con @BotFather.
 - *ChatID*: ID de chat obtenido con @RawDataBot o @MyIDBot.
 - *SendMessage*: Si este parámetro está presente enviará solamente el contenido del fichero backup log en formato de texto al ChatBot.
 - *SendDocument*: Si este parámetro está presente enviará al ChatBot el fichero de backup log adjunto y también enviará formato texto la fecha y hora del comienzo de backup y el tiempo total transcurrido del proceso de sincronización con el bucket S3.
+
+Diferencias entre establecer **SendMessage** y **SendDocument**:
 
 - -SendDocument  
 
@@ -287,19 +374,34 @@ Esto llamará a un fichero PowerShell .ps1 desde un fichero de proceso por lotes
 Si creamos una tarea programada en Windows (taskschd.msc) para una ejecución programada, la forma más efectiva sería establecer directamente un fichero de proceso por lotes .bat y que este llame al fichero PowerShell .ps1 donde cargará e invocará al resto de funciones.
 
 ## USBDrive-MountUnmount
-### Set-USBDriveMountUnmount.ps1
+### Invoke-USBDriveMountUnmount.ps1
 
-Es posible que el proceso de montaje y desmontaje del dispositivo USB externo queramos independizarlo, ya sea por factores que influyen en la duración del tiempo de montaje y simplemente no coincidan por solapamiento con el flujo de ejecución del resto de funciones. 
+Es posible separar el proceso de montaje y desmontaje del dispositivo USB externo para adaptarlo a factores como la duración del tiempo de montaje o la necesidad de cambiar el contexto de privilegios de usuario. Esto sirve como alternativa a las funciones *Set-USBDriveMount* y *Set-USBDriveUnmount* del script *Backup-AWS-S3.ps1*, utilizando solo esas funciones en el script *Invoke-USBDriveMountUnmount.ps1* de manera autónoma.
 
-Esto sería una alternativa de control independiente a las funciones *Set-USBDriveMount* y *Set-USBDriveUnmount* indicadas en script principal *Backup-AWS-S3.ps1*.
+Para montar unidades con mountvol se requieren privilegios administrativos, pero no para el resto de funciones del script. Usar un usuario sin privilegios en el día a día es una práctica segura, y este enfoque permite separar las acciones en dos tareas programadas: una con privilegios para el montaje y otra sin ellos para las demás funciones.
 
-Podemos utlizar el script *Set-USBDriveMountUnmount.ps1* de forma indpendiente para el proceso de montaje y desmontaje del dispositivo USB externo utilizado para el alamacenamiento de copias de Veeam Backup o el gestor de copias que usemos.
-
-Si optamos por esta opción, será necesario crear una nueva tarea programada dedicada a la ejecucación de este script para controlar los tiempos de espera en el montaje y desmontaje del volumen. 
+Implementar esta solución implica crear una tarea programada adicional que ejecute Invoke-USBDriveMountUnmount.ps1. Esto permitirá controlar eficazmente los tiempos de espera durante el montaje y desmontaje del volumen, asegurando que cada acción se ejecute con el nivel de privilegios adecuado.
 
 ### USBDrive-UnmountStartSystem.bat
 
-Este script se llamará desde una nueva tarea programada en la cual los desencadenadores de ejecución serían: "cada inicio nuevo de sistema" y "primer inicio de sesión". Asegurando así que la unidad externa USB no se monte de forma automática por el sistema tras estos eventos.
+Este script se ejecutará mediante una nueva tarea programada creada en un contexto de privilegios elevados en el Programador de tareas (taskschd.msc). 
+
+Los desencadenadores configurados serán: "al iniciar el sistema" y "en el primer inicio de sesión". Esto garantiza que la unidad externa USB no sea montada automáticamente por el sistema tras estos eventos.
+
+## Start-VeraCrypt-KPXC
+### Start-VeraCrypt-KPXC.ps1
+
+Este script trabajar con KeePassXC en el día a día, auto monta los dos volúmenes virtuales de VeraCrypt donde se almacena la base de datos (kdbx) y el archivo de seguridad adicional (keyx). Después de verificar que los volúmenes están montados, inicia KeePassXC y, al cerrarlo, auto desmonta los volúmenes de VeraCrypt para que queden nuevamente inaccesibles a nivel del sistema.
+
+Adicionalmente, realiza las comprobaciones necesarias para detectar si KeePassXC está en ejecución y/o si los volúmenes están previamente montados, con la finalidad de evitar posibles conflictos de condición de carrera entre los procesos.
+
+  **KeePassXC.lnk.txt** (acceso directo)
+
+Para poder ejecutar KeePassXC de forma cómoda a través de este script, se puede iniciar a través de un acceso directo con el siguiente los siguientes parámetros de desinto para invocarlo, y cambiar el icono por el de KeePassXC.
+
+```ps
+"C:\Program Files\PowerShell\7\pwsh.exe" -WindowStyle Hidden -ExecutionPolicy Bypass -File "LOCAL_PATH\Start-VeraCrypt-KPXC.ps1"
+```
 
 ## PasswdBackup
 ### New-PasswdFile.ps1
@@ -314,6 +416,7 @@ Si realimos este proceso con el mismo usuario de AWS que estamos usando para la 
 
 > Referencia AWS CLI S3 cp: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
 
+**Pull backup: S3 > Local.**
 ```
 aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
 ```

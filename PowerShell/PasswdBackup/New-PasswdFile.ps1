@@ -5,11 +5,13 @@ Function New-PasswdFile {
         [String]$Passwd7zKeyx,
         [String]$Passwd7zKpxc,
         [String]$PasswdEmail,
+		[String]$PasswdVCKdbx,
+		[String]$PasswdVCKeyx,
         [String]$PasswdFilePath
     )
 
-    $FileNames = @("Passwd7zKdbx", "Passwd7zKeyx", "Passwd7zKpxc", "PasswdEmail")
-    $Passwds = @($Passwd7zKdbx, $Passwd7zKeyx, $Passwd7zKpxc, $PasswdEmail)
+    $FileNames = @("Passwd7zKdbx", "Passwd7zKeyx", "Passwd7zKpxc", "PasswdEmail", "PasswdVCKdbx", "PasswdVCKeyx")
+    $Passwds = @($Passwd7zKdbx, $Passwd7zKeyx, $Passwd7zKpxc, $PasswdEmail, $PasswdVCKdbx, $PasswdVCKeyx)
     <#
     for ($i = 0; $i -lt $FileNames.Count; $i++) {
         $FileName = $FileNames[$i]
@@ -26,4 +28,5 @@ Function New-PasswdFile {
 
 New-PasswdFile -Passwd7zKdbx "Passw0rd.Kdbx" -Passwd7zKeyx "Passw0rd.Keyx" `
                -Passwd7zKpxc "Passw0rd.Kpxc" -PasswdEmail "Passw0rd.Email" `
+               -PasswdVCKdbx "Passw0rd.VCKdbx" -PasswdVCKeyx "Passw0rd.VCKeyx" `
                -PasswdFilePath "C:\PATH\PasswdBackup\"
