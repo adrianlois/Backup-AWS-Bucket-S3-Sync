@@ -16,7 +16,7 @@ Function Invoke-USBDriveMountUnmount {
         $Mount = '"' + $DriveLetterUsbBck + '" "' + '\\?\Volume{' + $GuidUsbBck + '}"'
         Invoke-Expression -Command "mountvol $Mount"
     }
-	# Tiempo de espera con la unidad previamente montada en USBDrive-Mount.
+    # Tiempo de espera con la unidad previamente montada en USBDrive-Mount.
     Start-Sleep -Seconds $Seconds
 
     # Desmontar unidad externa.

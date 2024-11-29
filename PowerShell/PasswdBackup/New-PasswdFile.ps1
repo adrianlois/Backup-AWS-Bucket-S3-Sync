@@ -5,8 +5,8 @@ Function New-PasswdFile {
         [String]$Passwd7zKeyx,
         [String]$Passwd7zKpxc,
         [String]$PasswdEmail,
-		[String]$PasswdVCKdbx,
-		[String]$PasswdVCKeyx,
+        [String]$PasswdVCKdbx,
+        [String]$PasswdVCKeyx,
         [String]$PasswdFilePath
     )
 
@@ -27,6 +27,6 @@ Function New-PasswdFile {
 }
 
 New-PasswdFile -Passwd7zKdbx "Passw0rd.Kdbx" -Passwd7zKeyx "Passw0rd.Keyx" `
-               -Passwd7zKpxc "Passw0rd.Kpxc" -PasswdEmail "Passw0rd.Email" `
-               -PasswdVCKdbx "Passw0rd.VCKdbx" -PasswdVCKeyx "Passw0rd.VCKeyx" `
-               -PasswdFilePath "C:\PATH\PasswdBackup\"
+            -Passwd7zKpxc "Passw0rd.Kpxc" -PasswdEmail "Passw0rd.Email" `
+            -PasswdVCKdbx "Passw0rd.VCKdbx" -PasswdVCKeyx "Passw0rd.VCKeyx" `
+            -PasswdFilePath "C:\PATH\PasswdBackup\"

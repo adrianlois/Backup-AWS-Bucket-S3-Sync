@@ -1,11 +1,11 @@
 ﻿Function Set-VeraCryptMount {
-    [CmdletBinding()]
-    Param (
+	[CmdletBinding()]
+	Param (
 		[String]$PasswdFilePath,
-        [String]$VCFilePath,
+		[String]$VCFilePath,
 		[String]$DriveLetterVCKdbx,
 		[String]$DriveLetterVCKeyx
-    )
+	)
 
 	$DriveLetterVCKdbx = $DriveLetterVCKdbx + ':'
 	$DriveLetterVCKeyx = $DriveLetterVCKeyx + ':'
@@ -21,10 +21,10 @@
 	$PlainPasswdVCKeyx = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr2)
 
 	# Comprobar si los volúmenes V o W están previamente montados en el sistema.
-    try {
+	try {
 		if (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
 
-            # Montar los volúmenes V y W donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
+			# Montar los volúmenes V y W donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
 			& 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_kdbx.hc") /letter $DriveLetterVCKdbx /password $PlainPasswdVCKdbx /protectMemory /nowaitdlg /wipecache /quit
 			& 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_keyx.hc") /letter $DriveLetterVCKeyx /password $PlainPasswdVCKeyx /protectMemory /nowaitdlg /wipecache /quit
 
@@ -66,6 +66,6 @@ Function Set-VeraCryptUnmount {
 }
 
 Set-VeraCryptMount -PasswdFilePath "C:\PATH\PasswdBackup\" -VCFilePath "C:\PATH\VeraCrypt\" `
-				   -DriveLetterVCKdbx "Y" -DriveLetterVCKeyx "Z"
+				-DriveLetterVCKdbx "Y" -DriveLetterVCKeyx "Z"
 # Si Start-KeePassXC devuelve true, ejecuta Set-VeraCryptUnmount.
 if (Start-KeePassXC) { Set-VeraCryptUnmount }
