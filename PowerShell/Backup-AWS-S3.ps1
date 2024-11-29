@@ -10,7 +10,7 @@ Function Set-USBDriveMount {
     )
 
     # $DriveLetterUsbBck variable de ámbito de script que también será usada en Set-USBDriveUnmount.
-	$DriveLetterUsbBck = $DriveLetterUsbBck + ':'
+    $DriveLetterUsbBck = $DriveLetterUsbBck + ':'
     $script:DriveLetterUsbBck = $DriveLetterUsbBck
 
     # Se comprueba si la unidad está previamente montada, sino lo está se monta.
@@ -41,49 +41,48 @@ Function Set-USBDriveUnmount {
 Function Set-VeraCryptMount {
     [CmdletBinding()]
     Param (
-		[String]$PasswdFilePath,
+	[String]$PasswdFilePath,
         [String]$VCFilePath,
-		[String]$DriveLetterVCKdbx,
-		[String]$DriveLetterVCKeyx
+	[String]$DriveLetterVCKdbx,
+	[String]$DriveLetterVCKeyx
     )
 
     # Asignar valores de las variables locales a variables globales del script.
-	$DriveLetterVCKdbx = $DriveLetterVCKdbx + ':'
-	$DriveLetterVCKeyx = $DriveLetterVCKeyx + ':'
-	$script:DriveLetterVCKdbx = $DriveLetterVCKdbx
-	$script:DriveLetterVCKeyx = $DriveLetterVCKeyx
-	$script:PasswdFilePath = $PasswdFilePath
+    $DriveLetterVCKdbx = $DriveLetterVCKdbx + ':'
+    $DriveLetterVCKeyx = $DriveLetterVCKeyx + ':'
+    $script:DriveLetterVCKdbx = $DriveLetterVCKdbx
+    $script:DriveLetterVCKeyx = $DriveLetterVCKeyx
+    $script:PasswdFilePath = $PasswdFilePath
 
-	# Paths de los ficheros de passwords VeraCrypt. Almacenar la cadena segura de la contraseña en un puntero de memoria.
-	$PasswdVCKdbx = Get-Content -Path ($PasswdFilePath + "PasswdVCKdbx") -Encoding utf8 | ConvertTo-SecureString
-	$ptr1 = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PasswdVCKdbx)
-	$PlainPasswdVCKdbx = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr1)
+    # Paths de los ficheros de passwords VeraCrypt. Almacenar la cadena segura de la contraseña en un puntero de memoria.
+    $PasswdVCKdbx = Get-Content -Path ($PasswdFilePath + "PasswdVCKdbx") -Encoding utf8 | ConvertTo-SecureString
+    $ptr1 = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PasswdVCKdbx)
+    $PlainPasswdVCKdbx = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr1)
 
-	$PasswdVCKeyx = Get-Content -Path ($PasswdFilePath + "PasswdVCKeyx") -Encoding utf8 | ConvertTo-SecureString
-	$ptr2 = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PasswdVCKeyx)
-	$PlainPasswdVCKeyx = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr2)
+    $PasswdVCKeyx = Get-Content -Path ($PasswdFilePath + "PasswdVCKeyx") -Encoding utf8 | ConvertTo-SecureString
+    $ptr2 = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PasswdVCKeyx)
+    $PlainPasswdVCKeyx = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr2)
 
-	# Comprobar si los volúmenes V o W están previamente montados en el sistema.
+    # Comprobar si los volúmenes V o W están previamente montados en el sistema.
     try {
-		if (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
+	if (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
+		# Montar los volúmenes V y W donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
+		& 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_kdbx.hc") /letter $DriveLetterVCKdbx /password $PlainPasswdVCKdbx /protectMemory /wipecache /nowaitdlg /quit
+		& 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_keyx.hc") /letter $DriveLetterVCKeyx /password $PlainPasswdVCKeyx /protectMemory /wipecache /nowaitdlg /quit
 
-			# Montar los volúmenes V y W donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
-			& 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_kdbx.hc") /letter $DriveLetterVCKdbx /password $PlainPasswdVCKdbx /protectMemory /wipecache /nowaitdlg /quit
-			& 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_keyx.hc") /letter $DriveLetterVCKeyx /password $PlainPasswdVCKeyx /protectMemory /wipecache /nowaitdlg /quit
-
-			# Se esperará hasta que ambos volúmenes V y W estén montados para evitar una condición de carrera antes de llamar a la función Compress-7ZipEncryption.
-			while (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
-				Start-Sleep -Milliseconds 10
-			}
+  		# Se esperará hasta que ambos volúmenes V y W estén montados para evitar una condición de carrera antes de llamar a la función Compress-7ZipEncryption.
+		while (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
+			Start-Sleep -Milliseconds 10
 		}
 	}
-	finally {
-		# Liberar los punteros de memoria de manera segura.
-		[System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr1)
-		$PlainPasswdVCKdbx = $Null
-		[System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr2)
-		$PlainPasswdVCKeyx = $Null
-	}
+    }
+    finally {
+	# Liberar los punteros de memoria de manera segura.
+	[System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr1)
+	$PlainPasswdVCKdbx = $Null
+	[System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr2)
+	$PlainPasswdVCKeyx = $Null
+    }
 }
 
 # Desmontar los volúmenes donde se almancenan los ficheros de kdbx y keyx de KeePassXC montados previamente en la función Set-VeraCryptMount.
@@ -124,7 +123,7 @@ Function Compress-7ZipEncryption {
     )
 
     # Paths de los ficheros de passwords 7zip. Almacenar la cadena segura de la contraseña en un puntero de memoria.
-	$passwd7zKdbx = Get-Content -Path ($PasswdFilePath + "Passwd7zKdbx") -Encoding utf8 | ConvertTo-SecureString
+    $passwd7zKdbx = Get-Content -Path ($PasswdFilePath + "Passwd7zKdbx") -Encoding utf8 | ConvertTo-SecureString
     $ptr1 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($passwd7zKdbx)
 	
     $passwd7zKeyx = Get-Content -Path ($PasswdFilePath + "Passwd7zKeyx") -Encoding utf8 | ConvertTo-SecureString
@@ -146,21 +145,21 @@ Function Compress-7ZipEncryption {
 
         Compress-7zip -Path $PathKdbx -ArchiveFileName $File7zKdbx `
                       -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
-					  -SecurePassword $passwd7zKdbx -EncryptFilenames
+		      -SecurePassword $passwd7zKdbx -EncryptFilenames
         if ($PathKeyx) {
             Compress-7zip -Path $PathKeyx -ArchiveFileName $File7zKeyx `
                           -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
-						  -SecurePassword $passwd7zKeyx -EncryptFilenames
+			  -SecurePassword $passwd7zKeyx -EncryptFilenames
         }
         Compress-7zip -Path $WorkPathTemp -ArchiveFileName $File7zKpxc `
                       -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
-					  -SecurePassword $passwd7zKpxc -EncryptFilenames
+		      -SecurePassword $passwd7zKpxc -EncryptFilenames
 
-		Move-Item -Path $File7zKpxc -Destination $RemoteFile7zKpxc -Force
-		Remove-Item $checkFileTemp -Force
+	Move-Item -Path $File7zKpxc -Destination $RemoteFile7zKpxc -Force
+	Remove-Item $checkFileTemp -Force
     }
     finally {
-		# Liberar los punteros de memoria de manera segura.
+	# Liberar los punteros de memoria de manera segura.
         [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr1)
         [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr2)
         [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr3)
