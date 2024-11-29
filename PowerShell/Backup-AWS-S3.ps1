@@ -41,10 +41,10 @@ Function Set-USBDriveUnmount {
 Function Set-VeraCryptMount {
     [CmdletBinding()]
     Param (
-    [String]$PasswdFilePath,
-    [String]$VCFilePath,
-    [String]$DriveLetterVCKdbx,
-    [String]$DriveLetterVCKeyx
+        [String]$PasswdFilePath,
+        [String]$VCFilePath,
+        [String]$DriveLetterVCKdbx,
+        [String]$DriveLetterVCKeyx
     )
 
     # Asignar valores de las variables locales a variables globales del script.
@@ -65,23 +65,23 @@ Function Set-VeraCryptMount {
 
     # Comprobar si los volúmenes V o W están previamente montados en el sistema.
     try {
-    if (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
-        # Montar los volúmenes V y W donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
-        & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_kdbx.hc") /letter $DriveLetterVCKdbx /password $PlainPasswdVCKdbx /protectMemory /wipecache /nowaitdlg /quit
-        & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_keyx.hc") /letter $DriveLetterVCKeyx /password $PlainPasswdVCKeyx /protectMemory /wipecache /nowaitdlg /quit
+        if (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
+            # Montar los volúmenes V y W donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
+            & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_kdbx.hc") /letter $DriveLetterVCKdbx /password $PlainPasswdVCKdbx /protectMemory /wipecache /nowaitdlg /quit
+            & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_keyx.hc") /letter $DriveLetterVCKeyx /password $PlainPasswdVCKeyx /protectMemory /wipecache /nowaitdlg /quit
 
-        # Se esperará hasta que ambos volúmenes V y W estén montados para evitar una condición de carrera antes de llamar a la función Compress-7ZipEncryption.
-        while (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
-            Start-Sleep -Milliseconds 10
+            # Se esperará hasta que ambos volúmenes V y W estén montados para evitar una condición de carrera antes de llamar a la función Compress-7ZipEncryption.
+            while (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
+                Start-Sleep -Milliseconds 10
+            }
         }
     }
-    }
     finally {
-    # Liberar los punteros de memoria de manera segura.
-    [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr1)
-    $PlainPasswdVCKdbx = $Null
-    [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr2)
-    $PlainPasswdVCKeyx = $Null
+        # Liberar los punteros de memoria de manera segura.
+        [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr1)
+        $PlainPasswdVCKdbx = $Null
+        [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr2)
+        $PlainPasswdVCKeyx = $Null
     }
 }
 
@@ -94,7 +94,8 @@ Function Set-VeraCryptUnmount {
     # Finalizar los procesos de VeraCrypt y KeePassXC desmontará automáticamente los volúmenes de VeraCrypt si estos se montaron previamente con el script Start-VeraCrypt-KPXC.ps1.
     if ($runningProcs -and (Test-Path $DriveLetterVCKdbx) -and (Test-Path $DriveLetterVCKeyx)) {
         $runningProcs | ForEach-Object { Stop-Process -Name $_.ProcessName -Force }
-    } else {
+    } 
+    else {
         # Desmontar los volúmenes si fueron montados durante la ejecución de este script.
         if ((Test-Path $DriveLetterVCKdbx) -or (Test-Path $DriveLetterVCKeyx)) {
             & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /dismount /force /wipecache /history n /quit
@@ -144,22 +145,22 @@ Function Compress-7ZipEncryption {
         $File7zKeyx = $WorkPathTemp + "File7zKeyx.7z"
 
         Compress-7zip -Path $PathKdbx -ArchiveFileName $File7zKdbx `
-                    -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
-                    -SecurePassword $passwd7zKdbx -EncryptFilenames
+                      -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
+                      -SecurePassword $passwd7zKdbx -EncryptFilenames
         if ($PathKeyx) {
             Compress-7zip -Path $PathKeyx -ArchiveFileName $File7zKeyx `
-                        -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
-                        -SecurePassword $passwd7zKeyx -EncryptFilenames
+                          -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
+                          -SecurePassword $passwd7zKeyx -EncryptFilenames
         }
         Compress-7zip -Path $WorkPathTemp -ArchiveFileName $File7zKpxc `
-                    -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
-                    -SecurePassword $passwd7zKpxc -EncryptFilenames
+                      -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
+                      -SecurePassword $passwd7zKpxc -EncryptFilenames
 
-    Move-Item -Path $File7zKpxc -Destination $RemoteFile7zKpxc -Force
-    Remove-Item $checkFileTemp -Force
+        Move-Item -Path $File7zKpxc -Destination $RemoteFile7zKpxc -Force
+        Remove-Item $checkFileTemp -Force
     }
     finally {
-    # Liberar los punteros de memoria de manera segura.
+        # Liberar los punteros de memoria de manera segura.
         [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr1)
         [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr2)
         [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr3)
@@ -264,10 +265,10 @@ Function Send-EmailMessageAndFile {
     # Enviar el fichero log adjunto vía email usando el SMTP de Outlook.
     try {
         Send-MailMessage -From "$UserFromEmail" -To "$UserToEmail" -Subject "$subjectEmail" -Body "$bodyEmail" -Attachments "$backupLog" `
-                        -SmtpServer "$smtpServer" -Port "$smtpPort" -UseSsl -Credential $credsEmail
+                         -SmtpServer "$smtpServer" -Port "$smtpPort" -UseSsl -Credential $credsEmail
     }
-    # Liberar el puntero de memoria de manera segura.
     finally {
+        # Liberar el puntero de memoria de manera segura.
         [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr)
     }
 }
@@ -342,7 +343,7 @@ Function Send-TelegramBotMessageAndFile {
 # Llamada y workflow de funciones
 Set-USBDriveMount -DriveLetterUsbBck "X" -GuidUsbBck "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 Set-VeraCryptMount -PasswdFilePath "C:\PATH\PasswdBackup\" -VCFilePath "C:\PATH\VeraCrypt\" `
-                -DriveLetterVCKdbx "Y:" -DriveLetterVCKeyx "Z:"
+                   -DriveLetterVCKdbx "Y:" -DriveLetterVCKeyx "Z:"
 Compress-7ZipEncryption -PathKdbx "Y:\file.kdbx" -PathKeyx "Z:\file.keyx" `
                         -File7zKpxc "C:\PATH\file.7z" -RemoteFile7zKpxc "H:\PATH\Datos\" `
                         -WorkPathTemp "C:\PATH\Temp\"
