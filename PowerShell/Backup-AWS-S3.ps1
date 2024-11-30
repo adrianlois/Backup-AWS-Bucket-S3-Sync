@@ -242,45 +242,6 @@ J:\PATH_4\Musica
     Write-Output "Tiempo total transcurrido: $elapsedTime" | Out-File -FilePath $backupLog -Append
 }
 
-# Enviar correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook.
-Function Send-EmailMessageAndFile {
-    [CmdletBinding()]
-    Param (
-        [String]$UserFromEmail,
-        [String]$UserToEmail
-    )
-
-    # SMTP Outook.
-    # $smtpServer = "smtp.office365.com"
-    # $smtpPort = "588"
-    $smtpServer = "smtp-mail.outlook.com"
-    $smtpPort = "587"
-
-    # Establecer credenciales email userFrom.
-    # Obtener password cifrada del fichero y establecer credenciales email.
-    $secPasswdEmail = Get-Content ($PasswdFilePath + "PasswdEmail") -Encoding utf8 | ConvertTo-SecureString
-    $credsEmail = New-Object System.Management.Automation.PSCredential ($UserFromEmail, $secPasswdEmail)
-    # Almacenar la cadena segura de la contraseña en un puntero de memoria.
-    $ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($secPasswdEmail)
-
-    # Asunto y cuerpo email.
-    $subjectEmail = "[Backup] AWS S3 Bucket"
-    $bodyEmail = [System.IO.File]::ReadAllText($backupLog)
-    # Alternativas usando Get-Content.
-    # $bodyEmail = Get-Content "$backupLog" | Out-String
-    # $bodyEmail = Get-Content "$backupLog" -Raw
-
-    # Enviar el fichero log adjunto vía email usando el SMTP de Outlook.
-    try {
-        Send-MailMessage -From "$UserFromEmail" -To "$UserToEmail" -Subject "$subjectEmail" -Body "$bodyEmail" -Attachments "$backupLog" `
-                         -SmtpServer "$smtpServer" -Port "$smtpPort" -UseSsl -Credential $credsEmail
-    }
-    finally {
-        # Liberar el puntero de memoria de manera segura.
-        [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr)
-    }
-}
-
 # Enviar notificación del fichero de log y su contenido adjunto vía ChatBot de Telegram.
 Function Send-TelegramBotMessageAndFile {
     [CmdletBinding()]
@@ -348,6 +309,45 @@ Function Send-TelegramBotMessageAndFile {
     elseif ($SendMessage) { return $resultSendMessage }
 }
 
+# Enviar correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook.
+Function Send-EmailMessageAndFile {
+    [CmdletBinding()]
+    Param (
+        [String]$UserFromEmail,
+        [String]$UserToEmail
+    )
+
+    # SMTP Outook.
+    # $smtpServer = "smtp.office365.com"
+    # $smtpPort = "588"
+    $smtpServer = "smtp-mail.outlook.com"
+    $smtpPort = "587"
+
+    # Establecer credenciales email userFrom.
+    # Obtener password cifrada del fichero y establecer credenciales email.
+    $secPasswdEmail = Get-Content ($PasswdFilePath + "PasswdEmail") -Encoding utf8 | ConvertTo-SecureString
+    $credsEmail = New-Object System.Management.Automation.PSCredential ($UserFromEmail, $secPasswdEmail)
+    # Almacenar la cadena segura de la contraseña en un puntero de memoria.
+    $ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($secPasswdEmail)
+
+    # Asunto y cuerpo email.
+    $subjectEmail = "[Backup] AWS S3 Bucket"
+    $bodyEmail = [System.IO.File]::ReadAllText($backupLog)
+    # Alternativas usando Get-Content.
+    # $bodyEmail = Get-Content "$backupLog" | Out-String
+    # $bodyEmail = Get-Content "$backupLog" -Raw
+
+    # Enviar el fichero log adjunto vía email usando el SMTP de Outlook.
+    try {
+        Send-MailMessage -From "$UserFromEmail" -To "$UserToEmail" -Subject "$subjectEmail" -Body "$bodyEmail" -Attachments "$backupLog" `
+                         -SmtpServer "$smtpServer" -Port "$smtpPort" -UseSsl -Credential $credsEmail
+    }
+    finally {
+        # Liberar el puntero de memoria de manera segura.
+        [System.Runtime.InteropServices.Marshal]::ZeroFreeCoTaskMemUnicode($ptr)
+    }
+}
+
 # Llamada y workflow de funciones
 Set-USBDriveMount -DriveLetterUsbBck "X" -GuidUsbBck "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
 Set-VeraCryptMount -PasswdFilePath "C:\PATH\PasswdBackup\" -VCFilePath "C:\PATH\VeraCrypt\" `
@@ -357,6 +357,6 @@ Compress-7ZipEncryption -PathKdbx "Y:\file.kdbx" -PathKeyx "Z:\file.keyx" `
                         -WorkPathTemp "C:\PATH\Temp\"
 Set-VeraCryptUnmount
 Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathBucketS3 "s3://BucketS3Name/Backup" -WorkPath "C:\PATH\"
-Send-EmailMessageAndFile -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
 Send-TelegramBotMessageAndFile -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendFile
+Send-EmailMessageAndFile -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
 Set-USBDriveUnmount -Seconds "XXXX"

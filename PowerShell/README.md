@@ -21,8 +21,8 @@
     - [Set-VeraCryptUnmount](#set-veracryptunmount)
     - [Compress-7ZipEncryption](#compress-7zipencryption)
     - [Invoke-BackupAWSS3](#invoke-backupawss3)
-    - [Send-EmailMessageAndDocument](#send-emailmessageanddocument)
     - [Send-TelegramBotMessageAndDocument](#send-telegrambotmessageanddocument)
+    - [Send-EmailMessageAndDocument](#send-emailmessageanddocument)
   - [Backup-AWS-S3-Trigger.bat](#backup-aws-s3-triggerbat)
   - [USBDrive-MountUnmount](#usbdrive-mountunmount)
     - [Invoke-USBDriveMountUnmount.ps1](#invoke-usbdrivemountunmountps1)
@@ -291,28 +291,6 @@ Verifica si uno o más ficheros y/o directorios locales existentes se han actual
 Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathBucketS3 "s3://BucketS3Name/Backup" -WorkPath "C:\PATH\"
 ```
 
-### Send-EmailMessageAndDocument
-
-Esta función envía un correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook. 
-
-> [!NOTE]
-> Por seguridad Gmail ya no permite esta opción. https://support.google.com/accounts/answer/6010255
-
-1. Crear el fichero con la password cifrada que será usada para la autenticación de la cuenta de correo de Outlook. Deben respetarse los nombres de salida para que coincida con el de la función.
-
-```ps
-"Passw0rd.Email" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\PasswdEmail"
-```
-
-- *-UserFromEmail*: Dirección de correo que enviará el mensaje (se usará las credenciales de autenticación y el SMTP de Outook).
-- *-UserToEmail*: Dirección de correo destinaría que recibirá el mensaje.
-
-```ps
-Send-EmailDocumentAndMessage -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
-```
-
-![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_email_backup_log_powershell.png)
-
 ### Send-TelegramBotMessageAndDocument
 
 Esta función envía una notificación del fichero de log y su contenido adjunto vía ChatBot de Telegram. Según los parámetros especificados en la función es posible enviar el fichero de log adjunto y también el tiempo de comienzo y tiempo total transcurrido del proceso de backup o enviar el fichero adjunto y también el contenido del fichero en formato de mensaje al ChatBot. 
@@ -367,6 +345,28 @@ Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXX
 ```
 ![Envio Telegram Bot fichero backup log SendMessage y SendDocument](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessageDocument.png)
 
+### Send-EmailMessageAndDocument
+
+Esta función envía un correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook. 
+
+> [!NOTE]
+> Por seguridad Gmail ya no permite esta opción. https://support.google.com/accounts/answer/6010255
+
+1. Crear el fichero con la password cifrada que será usada para la autenticación de la cuenta de correo de Outlook. Deben respetarse los nombres de salida para que coincida con el de la función.
+
+```ps
+"Passw0rd.Email" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\PasswdEmail"
+```
+
+- *-UserFromEmail*: Dirección de correo que enviará el mensaje (se usará las credenciales de autenticación y el SMTP de Outook).
+- *-UserToEmail*: Dirección de correo destinaría que recibirá el mensaje.
+
+```ps
+Send-EmailDocumentAndMessage -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
+```
+
+![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_email_backup_log_powershell.png)
+
 ## Backup-AWS-S3-Trigger.bat
 
 Esto llamará a un fichero PowerShell .ps1 desde un fichero de proceso por lotes .bat. Establecer el path donde se encuentra el fichero Backup-AWS-S3.ps1.
@@ -406,7 +406,7 @@ Para poder ejecutar KeePassXC de forma cómoda a través de este script, se pued
 ## PasswdBackup
 ### New-PasswdFile.ps1
 
-Este script automatizará el proceso de creación de los ficheros de password cifradas que serán utilizados en las funciones *Compress-7ZipEncryption* y *Send-EmailDocumentAndMessage*.
+Este script automatizará el proceso de creación de los ficheros de password cifradas que serán utilizados en las funciones: *Set-VeraCryptMount*, *Compress-7ZipEncryption* y *Send-EmailDocumentAndMessage*.
 
 ## Recuperación Backup: S3 a Local
 
