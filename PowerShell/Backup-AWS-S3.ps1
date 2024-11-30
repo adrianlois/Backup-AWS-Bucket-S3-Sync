@@ -63,9 +63,9 @@ Function Set-VeraCryptMount {
     $ptr2 = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PasswdVCKeyx)
     $PlainPasswdVCKeyx = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr2)
 
-    # Comprobar si los volúmenes V o W están previamente montados en el sistema.
+    # Comprobar si los volúmenes V y W están previamente montados en el sistema.
     try {
-        if (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
+        if (-not (Test-Path $DriveLetterVCKdbx) -and -not (Test-Path $DriveLetterVCKeyx)) {
             # Montar los volúmenes V y W donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
             & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_kdbx.hc") /letter $DriveLetterVCKdbx /password $PlainPasswdVCKdbx /protectMemory /wipecache /nowaitdlg /quit
             & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_keyx.hc") /letter $DriveLetterVCKeyx /password $PlainPasswdVCKeyx /protectMemory /wipecache /nowaitdlg /quit
@@ -85,19 +85,27 @@ Function Set-VeraCryptMount {
     }
 }
 
-# Desmontar los volúmenes donde se almancenan los ficheros de kdbx y keyx de KeePassXC montados previamente en la función Set-VeraCryptMount.
+# Desmontar los volúmenes de VeraCrypt donde se almancenan los ficheros de kdbx y keyx de KeePassXC.
 Function Set-VeraCryptUnmount {
-    # Lista y comprobar si los procesos VeraCrypt y KeePassXC están corriendo.
-    $runningProcs = @("VeraCrypt", "KeePassXC") | `
-    ForEach-Object { Get-Process -Name $_ -ErrorAction SilentlyContinue } | Where-Object { $_ }
+    # Procesos esperados
+    $expectedProcs = @("VeraCrypt", "KeePassXC")
+    # Buscar los procesos activos
+    $runningProcs = $expectedProcs | `
+        ForEach-Object { Get-Process -Name $_ -ErrorAction SilentlyContinue } | Where-Object { $_ }
+    # Extraer los nombres de los procesos encontrados
+    $actualProcs = $runningProcs.ProcessName
 
-    # Finalizar los procesos de VeraCrypt y KeePassXC desmontará automáticamente los volúmenes de VeraCrypt si estos se montaron previamente con el script Start-VeraCrypt-KPXC.ps1.
-    if ($runningProcs -and (Test-Path $DriveLetterVCKdbx) -and (Test-Path $DriveLetterVCKeyx)) {
+    # Comprobar si ambos procesos están en ejecución y ambos volúmenes están montados
+    $allProcessesRunning = ($expectedProcs | ForEach-Object { $_ -in $actualProcs }) -notcontains $false
+    $allPathsExist = (Test-Path $DriveLetterVCKdbx) -and (Test-Path $DriveLetterVCKeyx)
+
+    if ($allProcessesRunning -and $allPathsExist) {
+        # Finalizar los procesos de VeraCrypt y KeePassXC desmontará automáticamente los volúmenes de VeraCrypt si estos se montaron previamente con el script Start-VeraCrypt-KPXC.ps1.
         $runningProcs | ForEach-Object { Stop-Process -Name $_.ProcessName -Force }
-    } 
+    }
     else {
-        # Desmontar los volúmenes si fueron montados durante la ejecución de este script.
-        if ((Test-Path $DriveLetterVCKdbx) -or (Test-Path $DriveLetterVCKeyx)) {
+        # Desmontar los volúmenes si fueron montados durante la ejecución de este script con la función Set-VeraCryptMount.
+        if ((Test-Path $DriveLetterVCKdbx) -and (Test-Path $DriveLetterVCKeyx)) {
             & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /dismount /force /wipecache /history n /quit
             
             # Se esperará hasta que ambos volúmenes V y W estén desmontados para evitar una condición de carrera antes de finalizar el proceso de VeraCrypt.exe.
