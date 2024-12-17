@@ -47,6 +47,11 @@ Function Set-VeraCryptMount {
         [String]$DriveLetterVCKeyx
     )
 
+    # Verificar y agregar la barra de directorio '\' al final si no existe.
+    if (-not $PasswdFilePath.EndsWith('\')) {
+        $PasswdFilePath += '\'
+    }
+
     # Asignar valores de las variables locales a variables globales del script.
     $DriveLetterVCKdbx = $DriveLetterVCKdbx + ':'
     $DriveLetterVCKeyx = $DriveLetterVCKeyx + ':'
@@ -65,6 +70,10 @@ Function Set-VeraCryptMount {
 
     # Comprobar si los volúmenes V y W están previamente montados en el sistema.
     try {
+        if (-not $VCFilePath.EndsWith('\')) {
+            $VCFilePath += '\'
+        }
+
         if (-not (Test-Path $DriveLetterVCKdbx) -and -not (Test-Path $DriveLetterVCKeyx)) {
             # Montar los volúmenes V y W donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
             & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_kdbx.hc") /letter $DriveLetterVCKdbx /password $PlainPasswdVCKdbx /protectMemory /wipecache /nowaitdlg /quit
@@ -141,6 +150,10 @@ Function Compress-7ZipEncryption {
     $passwd7zKpxc = Get-Content -Path ($PasswdFilePath + "Passwd7zKpxc") -Encoding utf8 | ConvertTo-SecureString
     $ptr3 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($passwd7zKpxc)
 
+    if (-not $WorkPathTemp.EndsWith('\')) {
+        $WorkPathTemp += '\'
+    }
+
     # Comprobar y eliminar si existen ficheros comprimidos anteriores.
     $checkFileTemp = $WorkPathTemp + "*.7z"
     if (Test-Path -Path $checkFileTemp) {
@@ -163,6 +176,10 @@ Function Compress-7ZipEncryption {
         Compress-7zip -Path $WorkPathTemp -ArchiveFileName $File7zKpxc `
                       -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
                       -SecurePassword $passwd7zKpxc -EncryptFilenames
+
+        if (-not $RemoteFile7zKpxc.EndsWith('\')) {
+            $RemoteFile7zKpxc += '\'
+        }
 
         Move-Item -Path $File7zKpxc -Destination $RemoteFile7zKpxc -Force
         Remove-Item $checkFileTemp -Force
@@ -187,6 +204,9 @@ Function Invoke-BackupAWSS3 {
     # Fecha y hora.
     $currentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
     # $backupLog variable en ámbito de script del fichero de log con fecha actual que también será usada en Send-EmailMessageAndFile y Send-TelegramLocalFile.
+    if (-not $WorkPath.EndsWith('\')) {
+        $WorkPath += '\'
+    }
     $script:backupLog = $WorkPath + "Backup_" + (Get-Date -uformat "%d-%m-%Y") + ".log"
 
     # Comprobar y eliminar si existe un fichero de log anterior.
