@@ -10,12 +10,12 @@ Function Set-USBDriveMount {
     )
 
     # $DriveLetterUsbBck variable de ámbito de script que también será usada en Set-USBDriveUnmount.
-    $DriveLetterUsbBck = $DriveLetterUsbBck + ':'
-    $script:DriveLetterUsbBck = $DriveLetterUsbBck
+    $script:DriveLetterUsbBck = $DriveLetterUsbBck + ':'
+	$DriveLetterUsbBck = $script:DriveLetterUsbBck
 
     # Se comprueba si la unidad está previamente montada, sino lo está se monta.
-    $idDrive = (Get-Volume | Where-Object {$_.DriveLetterUsbBck -eq "$DriveLetterUsbBck"}).UniqueId
-    if (-not ($idDrive)) {
+    $IdDrive = (Get-Volume | Where-Object {$_.DriveLetterUsbBck -eq "$DriveLetterUsbBck"}).UniqueId
+    if (-not ($IdDrive)) {
         # Montar unidad externa
         $Mount = '"' + $DriveLetterUsbBck + '" "' + '\\?\Volume{' + $GuidUsbBck + '}"'
         Invoke-Expression -Command "mountvol $Mount"
@@ -53,10 +53,10 @@ Function Set-VeraCryptMount {
     }
 
     # Asignar valores de las variables locales a variables globales del script.
-    $DriveLetterVCKdbx = $DriveLetterVCKdbx + ':'
-    $DriveLetterVCKeyx = $DriveLetterVCKeyx + ':'
-    $script:DriveLetterVCKdbx = $DriveLetterVCKdbx
-    $script:DriveLetterVCKeyx = $DriveLetterVCKeyx
+    $script:DriveLetterVCKdbx = $DriveLetterVCKdbx + ':'
+	$DriveLetterVCKdbx = $script:DriveLetterVCKdbx
+    $script:DriveLetterVCKeyx = $DriveLetterVCKeyx + ':'
+	$DriveLetterVCKeyx = $script:DriveLetterVCKeyx
     $script:PasswdFilePath = $PasswdFilePath
 
     # Paths de los ficheros de passwords VeraCrypt. Almacenar la cadena segura de la contraseña en un puntero de memoria.
@@ -68,18 +68,18 @@ Function Set-VeraCryptMount {
     $ptr2 = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PasswdVCKeyx)
     $PlainPasswdVCKeyx = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr2)
 
-    # Comprobar si los volúmenes V y W están previamente montados en el sistema.
+    # Comprobar si los volúmenes están previamente montados.
     try {
         if (-not $VCFilePath.EndsWith('\')) {
             $VCFilePath += '\'
         }
 
         if (-not (Test-Path $DriveLetterVCKdbx) -and -not (Test-Path $DriveLetterVCKeyx)) {
-            # Montar los volúmenes V y W donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
+            # Montar los volúmenes donde se almacenan los ficheros de kdbx y keyx de KeePassXC.
             & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_kdbx.hc") /letter $DriveLetterVCKdbx /password $PlainPasswdVCKdbx /protectMemory /wipecache /nowaitdlg /quit
             & 'C:\Program Files\VeraCrypt\VeraCrypt.exe' /volume ($VCFilePath + "kpxc_keyx.hc") /letter $DriveLetterVCKeyx /password $PlainPasswdVCKeyx /protectMemory /wipecache /nowaitdlg /quit
 
-            # Se esperará hasta que ambos volúmenes V y W estén montados para evitar una condición de carrera antes de llamar a la función Compress-7ZipEncryption.
+            # Se esperará hasta que ambos volúmenes estén montados para evitar una condición de carrera antes de llamar a la función Compress-7ZipEncryption.
             while (-not (Test-Path $DriveLetterVCKdbx) -or -not (Test-Path $DriveLetterVCKeyx)) {
                 Start-Sleep -Milliseconds 10
             }
@@ -141,23 +141,23 @@ Function Compress-7ZipEncryption {
     )
 
     # Paths de los ficheros de passwords 7zip. Almacenar la cadena segura de la contraseña en un puntero de memoria.
-    $passwd7zKdbx = Get-Content -Path ($PasswdFilePath + "Passwd7zKdbx") -Encoding utf8 | ConvertTo-SecureString
-    $ptr1 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($passwd7zKdbx)
+    $Passwd7zKdbx = Get-Content -Path ($PasswdFilePath + "Passwd7zKdbx") -Encoding utf8 | ConvertTo-SecureString
+    $ptr1 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($Passwd7zKdbx)
 
-    $passwd7zKeyx = Get-Content -Path ($PasswdFilePath + "Passwd7zKeyx") -Encoding utf8 | ConvertTo-SecureString
-    $ptr2 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($passwd7zKeyx)
+    $Passwd7zKeyx = Get-Content -Path ($PasswdFilePath + "Passwd7zKeyx") -Encoding utf8 | ConvertTo-SecureString
+    $ptr2 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($Passwd7zKeyx)
 
-    $passwd7zKpxc = Get-Content -Path ($PasswdFilePath + "Passwd7zKpxc") -Encoding utf8 | ConvertTo-SecureString
-    $ptr3 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($passwd7zKpxc)
+    $Passwd7zKpxc = Get-Content -Path ($PasswdFilePath + "Passwd7zKpxc") -Encoding utf8 | ConvertTo-SecureString
+    $ptr3 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($Passwd7zKpxc)
 
     if (-not $WorkPathTemp.EndsWith('\')) {
         $WorkPathTemp += '\'
     }
 
     # Comprobar y eliminar si existen ficheros comprimidos anteriores.
-    $checkFileTemp = $WorkPathTemp + "*.7z"
-    if (Test-Path -Path $checkFileTemp) {
-        Remove-Item -Path $checkFileTemp -Recurse -Force
+    $CheckFileTemp = $WorkPathTemp + "*.7z"
+    if (Test-Path -Path $CheckFileTemp) {
+        Remove-Item -Path $CheckFileTemp -Recurse -Force
     }
 
     # Doble compresión en formato 7z, mover al path destino el fichero final y eliminar los ficheros temporales creados en esta operación.
@@ -167,22 +167,22 @@ Function Compress-7ZipEncryption {
 
         Compress-7zip -Path $PathKdbx -ArchiveFileName $File7zKdbx `
                       -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
-                      -SecurePassword $passwd7zKdbx -EncryptFilenames
+                      -SecurePassword $Passwd7zKdbx -EncryptFilenames
         if ($PathKeyx) {
             Compress-7zip -Path $PathKeyx -ArchiveFileName $File7zKeyx `
                           -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
-                          -SecurePassword $passwd7zKeyx -EncryptFilenames
+                          -SecurePassword $Passwd7zKeyx -EncryptFilenames
         }
         Compress-7zip -Path $WorkPathTemp -ArchiveFileName $File7zKpxc `
                       -Format SevenZip -CompressionLevel Normal -CompressionMethod Deflate `
-                      -SecurePassword $passwd7zKpxc -EncryptFilenames
+                      -SecurePassword $Passwd7zKpxc -EncryptFilenames
 
         if (-not $RemoteFile7zKpxc.EndsWith('\')) {
             $RemoteFile7zKpxc += '\'
         }
 
         Move-Item -Path $File7zKpxc -Destination $RemoteFile7zKpxc -Force
-        Remove-Item $checkFileTemp -Force
+        Remove-Item $CheckFileTemp -Force
     }
     finally {
         # Liberar los punteros de memoria de manera segura.
@@ -202,17 +202,18 @@ Function Invoke-BackupAWSS3 {
     )
 
     # Fecha y hora.
-    $currentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
-    # $backupLog variable en ámbito de script del fichero de log con fecha actual que también será usada en Send-EmailMessageAndFile y Send-TelegramLocalFile.
+    $CurrentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
+    # $BackupLog variable en ámbito de script del fichero de log con fecha actual que también será usada en Send-EmailMessageAndFile y Send-TelegramLocalFile.
     if (-not $WorkPath.EndsWith('\')) {
         $WorkPath += '\'
     }
-    $script:backupLog = $WorkPath + "Backup_" + (Get-Date -uformat "%d-%m-%Y") + ".log"
+    $script:BackupLog = $WorkPath + "Backup_" + (Get-Date -uformat "%d-%m-%Y") + ".log"
+    $BackupLog = $script:BackupLog
 
     # Comprobar y eliminar si existe un fichero de log anterior.
-    $checkLog = $WorkPath + "Backup_*.log"
-    if (Test-Path -Path $checkLog) {
-        Remove-Item -Path $checkLog -Recurse -Force
+    $CheckLog = $WorkPath + "Backup_*.log"
+    if (Test-Path -Path $CheckLog) {
+        Remove-Item -Path $CheckLog -Recurse -Force
     }
 
 <#
@@ -231,35 +232,35 @@ J:\PATH_4\Musica
     $TXTPathLines = Get-Content -Path $SourcePathLocalData
 
     # Mostrar fecha y hora del comienzo del proceso de backup al princpio del log.
-    $startTime = (Get-Date)
-    Write-Output "Backup comienza: $currentDateTime" | Out-File -FilePath $backupLog -Append
-    Write-Output "___________________________________`n" | Out-File -FilePath $backupLog -Append
+    $StartTime = (Get-Date)
+    Write-Output "Backup comienza: $CurrentDateTime" | Out-File -FilePath $BackupLog -Append
+    Write-Output "___________________________________`n" | Out-File -FilePath $BackupLog -Append
 
     # Sincronizar datos locales al bucket S3. Importar e iterar las líneas con los paths locales establecidos en el fichero PathLocalData.txt.
     $TXTPathLines | Foreach-Object {
         $PathLocalData = $_
 
         # Mantener la misma estructura jerárquica de directorios en la subida al bucket S3 cuando se especifacan múltiples paths locales en PathLocalData.txt.
-        $pathRelativeBucketS3  = ($PathLocalData.SubString(2) -Replace '\\', '/')
+        $PathRelativeBucketS3  = ($PathLocalData.SubString(2) -Replace '\\', '/')
 
-        aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $pathRelativeBucketS3)" --sse AES256 --delete --include "*" --exclude "*.DS_Store" | `
-        # Eliminar líneas del proceso de sincronización en el output del backupLog y quedarse solo con las líneas de los cambios de ficheros y directorios.
+        aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $PathRelativeBucketS3)" --sse AES256 --delete --include "*" --exclude "*.DS_Store" | `
+        # Eliminar líneas del proceso de sincronización en el output del BackupLog y quedarse solo con las líneas de los cambios de ficheros y directorios.
         ForEach-Object {
             if (($_ -notlike "*remaining*") -and ($_ -notlike "*calculating*")) {
-                # Eliminar espacios en blanco iniciales y finales de cada línea en output al fichero $backupLog.
-                $_.Trim() | Out-File -FilePath $backupLog -Encoding utf8 -Append
+                # Eliminar espacios en blanco iniciales y finales de cada línea en output al fichero $BackupLog.
+                $_.Trim() | Out-File -FilePath $BackupLog -Encoding utf8 -Append
             }
         }
     }
 
-    Write-Output "___________________________________" | Out-File -FilePath $backupLog -Append
-    $endTime = (Get-Date)
-    $elapsedTime = $($endTime-$startTime).ToString().SubString(0,8)
-    # Resetear $currentDateTime para obtener la hora actual hasta este momento del proceso de backup.
-    # Establecer $currentDateTime en este punto como variable de ámbito de script que también será usada en Send-EmailMessageAndFile.
-    $currentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
-    Write-Output "Backup finaliza: $currentDateTime`n" | Out-File -FilePath $backupLog -Append
-    Write-Output "Tiempo total transcurrido: $elapsedTime" | Out-File -FilePath $backupLog -Append
+    Write-Output "___________________________________" | Out-File -FilePath $BackupLog -Append
+    $EndTime = (Get-Date)
+    $ElapsedTime = $($EndTime-$StartTime).ToString().SubString(0,8)
+    # Resetear $CurrentDateTime para obtener la hora actual hasta este momento del proceso de backup.
+    # Establecer $CurrentDateTime en este punto como variable de ámbito de script que también será usada en Send-EmailMessageAndFile.
+    $CurrentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
+    Write-Output "Backup finaliza: $CurrentDateTime`n" | Out-File -FilePath $BackupLog -Append
+    Write-Output "Tiempo total transcurrido: $ElapsedTime" | Out-File -FilePath $BackupLog -Append
 }
 
 # Enviar notificación del fichero de log y su contenido adjunto vía ChatBot de Telegram.
@@ -272,61 +273,61 @@ Function Send-TelegramBotMessageAndFile {
         [Switch]$SendFile
     )
 
-    # Si está presente el flag -SendMessage está presente: enviar todo el contenido del fichero backupLog como mensaje de texto en chatBot.
+    # Si está presente el flag -SendMessage está presente: enviar todo el contenido del fichero BackupLog como mensaje de texto en chatBot.
     if ($SendMessage) {
         # Crear un splat utilizando hashtables anidadas.
-        $invokeRestMethodSplat = @{
+        $InvokeRestMethodSplat = @{
             Uri = 'https://api.telegram.org/bot{0}/sendMessage' -f $BotToken
             Form = @{
                 chat_id = $ChatID
-                text = Get-Content -Path $backupLog -Raw
+                text = Get-Content -Path $BackupLog -Raw
             }
             Method = 'Post'
             ErrorAction = 'Stop'
         }
-        $resultSendMessage = Invoke-RestMethod @invokeRestMethodSplat
+        $ResultSendMessage = Invoke-RestMethod @InvokeRestMethodSplat
     }
 
-    # Si está presente el flag -SendFile: enviar el fichero de backupLog como adjunto.
+    # Si está presente el flag -SendFile: enviar el fichero de BackupLog como adjunto.
     if ($SendFile) {
         # Enviar también la primera y última línea del contenido del fichero donde se indica cuando comienza y el tiempo total del backup como mensaje de texto en el chatBot.
         if (-not $SendMessage) {
-            #$firstLine = Get-Content -Path $backupLog | Select-Object -First 1
-            #$lastLine = Get-Content -Path $backupLog | Select-Object -Last 1
-            #$shortMessage = "$($firstLine.Trim())`n$($lastLine.Trim())"
+            #$firstLine = Get-Content -Path $BackupLog | Select-Object -First 1
+            #$lastLine = Get-Content -Path $BackupLog | Select-Object -Last 1
+            #$ShortMessage = "$($firstLine.Trim())`n$($lastLine.Trim())"
 
-            $matchingLines = Get-Content -Path $backupLog | Where-Object { $_ -match "Backup comienza|Tiempo total" }
-            $shortMessage = $($matchingLines.Trim()) -join "`n"
+            $MatchingLines = Get-Content -Path $BackupLog | Where-Object { $_ -match "Backup comienza|Tiempo total" }
+            $ShortMessage = $($MatchingLines.Trim()) -join "`n"
 
-            $invokeRestMethodSplat = @{
+            $InvokeRestMethodSplat = @{
                 Uri = 'https://api.telegram.org/bot{0}/sendMessage' -f $BotToken
                 Form = @{
                     chat_id = $ChatID
-                    text = $shortMessage
+                    text = $ShortMessage
                 }
                 Method = 'Post'
                 ErrorAction = 'Stop'
             }
-            $resultSendShortMessage = Invoke-RestMethod @invokeRestMethodSplat
+            $ResultSendShortMessage = Invoke-RestMethod @InvokeRestMethodSplat
         }
 
-        # Enviar el fichero adjunto backupLog al chatBot.
-        $invokeRestMethodSplat = @{
+        # Enviar el fichero adjunto BackupLog al chatBot.
+        $InvokeRestMethodSplat = @{
             Uri = 'https://api.telegram.org/bot{0}/sendDocument' -f $BotToken
             Form = @{
                 chat_id = $ChatID
-                document = [System.IO.FileInfo]$backupLog
+                document = [System.IO.FileInfo]$BackupLog
             }
             Method = 'Post'
             ErrorAction = 'Stop'
         }
-        $resultSendFile = Invoke-RestMethod @invokeRestMethodSplat
+        $ResultSendFile = Invoke-RestMethod @InvokeRestMethodSplat
     }
 
     # Devolver resultados en función de los flags indicados.
-    if ($SendFile -and $SendMessage) { return $resultSendMessage, $resultSendFile }
-    elseif ($SendFile) { return $resultSendShortMessage, $resultSendFile }
-    elseif ($SendMessage) { return $resultSendMessage }
+    if ($SendFile -and $SendMessage) { return $ResultSendMessage, $ResultSendFile }
+    elseif ($SendFile) { return $ResultSendShortMessage, $ResultSendFile }
+    elseif ($SendMessage) { return $ResultSendMessage }
 }
 
 # Enviar correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook.
@@ -338,29 +339,29 @@ Function Send-EmailMessageAndFile {
     )
 
     # SMTP Outook.
-    # $smtpServer = "smtp.office365.com"
-    # $smtpPort = "588"
-    $smtpServer = "smtp-mail.outlook.com"
-    $smtpPort = "587"
+    # $SmtpServer = "smtp.office365.com"
+    # $SmtpPort = "588"
+    $SmtpServer = "smtp-mail.outlook.com"
+    $SmtpPort = "587"
 
     # Establecer credenciales email userFrom.
     # Obtener password cifrada del fichero y establecer credenciales email.
-    $secPasswdEmail = Get-Content ($PasswdFilePath + "PasswdEmail") -Encoding utf8 | ConvertTo-SecureString
-    $credsEmail = New-Object System.Management.Automation.PSCredential ($UserFromEmail, $secPasswdEmail)
+    $SecPasswdEmail = Get-Content ($PasswdFilePath + "PasswdEmail") -Encoding utf8 | ConvertTo-SecureString
+    $CredsEmail = New-Object System.Management.Automation.PSCredential ($UserFromEmail, $SecPasswdEmail)
     # Almacenar la cadena segura de la contraseña en un puntero de memoria.
-    $ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($secPasswdEmail)
+    $ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($SecPasswdEmail)
 
     # Asunto y cuerpo email.
-    $subjectEmail = "[Backup] AWS S3 Bucket"
-    $bodyEmail = [System.IO.File]::ReadAllText($backupLog)
+    $SubjectEmail = "[Backup] AWS S3 Bucket"
+    $BodyEmail = [System.IO.File]::ReadAllText($BackupLog)
     # Alternativas usando Get-Content.
-    # $bodyEmail = Get-Content "$backupLog" | Out-String
-    # $bodyEmail = Get-Content "$backupLog" -Raw
+    # $BodyEmail = Get-Content "$BackupLog" | Out-String
+    # $BodyEmail = Get-Content "$BackupLog" -Raw
 
     # Enviar el fichero log adjunto vía email usando el SMTP de Outlook.
     try {
-        Send-MailMessage -From "$UserFromEmail" -To "$UserToEmail" -Subject "$subjectEmail" -Body "$bodyEmail" -Attachments "$backupLog" `
-                         -SmtpServer "$smtpServer" -Port "$smtpPort" -UseSsl -Credential $credsEmail
+        Send-MailMessage -From "$UserFromEmail" -To "$UserToEmail" -Subject "$SubjectEmail" -Body "$BodyEmail" -Attachments "$BackupLog" `
+                         -SmtpServer "$SmtpServer" -Port "$SmtpPort" -UseSsl -Credential $CredsEmail
     }
     finally {
         # Liberar el puntero de memoria de manera segura.
