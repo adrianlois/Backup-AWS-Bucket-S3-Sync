@@ -5,7 +5,7 @@ fechaHoraActual="$(date +'%d/%m/%Y - %H:%M:%S')"
 fechaActual="$(date +'%d-%m-%Y')"
 
 # Email
-envioEmailCuentaUsuario="emailCuenta@gmail.com"
+envioEmailCuentaUsuario="Usuario@email.com"
 asuntoEmail="[Backup] AWS S3 Bucket"
 cuerpoEmail="cuerpoEmail"
 

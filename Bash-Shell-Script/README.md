@@ -74,7 +74,7 @@ Default output format [None]: json
 
 - pathLocalDatos="/pathLocal/datos/"
 - pathRemotoBucketS3="s3://bucketS3/backup/"
-- envioEmailCuentaUsuario="emailCuentaUsuario@gmail.com"
+- envioEmailCuentaUsuario="Usuario@email.com"
 - asuntoEmail="asuntoEmail"
 - cuerpoEmail ="cuerpoEmail"
 
