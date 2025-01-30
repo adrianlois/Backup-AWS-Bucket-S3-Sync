@@ -325,18 +325,19 @@ J:\PATH_4\Musica
 
 **Parámetros de sincronización aws s3 sync - Local a S3:**
 
-Verifica si uno o más archivos y/o directorios locales existentes se han actualizado comprobando su nombre, tamaño y el timestamp. Actualmente no creo que compruebe los cambios en los hashes del archivo.
-
 ```ps
-aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $PathRelativeBucketS3)" --sse AES256 --delete --include "*" --exclude "*.DS_Store" --exact-timestamps
+aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $PathRelativeBucketS3)" --sse AES256 --delete --exact-timestamps --include "*" --exclude "*.DS_Store"
 ```
 
-- *aws s3 sync*: En este caso, sincroniza en forma de espejo los archivos locales a un bucket S3 verificando su presencia en local, comparando su tamaño y la fecha de última modificación, creándolos o eliminándolos en S3 según sea necesario.
+> [!NOTE]
+> La identificación de cambios en los archivos al usar **aws s3 sync** se basa principalmente en comprobar su presencia en local y comparar su tamaño y fecha de última modificación. Cabe aclarar que no se realiza mediante el cálculo de hashes de los archivos.
+
+- *aws s3 sync*: En este caso, sincroniza en forma de espejo los archivos locales a un bucket S3, creándolos o eliminándolos en S3 según sea necesario.
 - *--sse AES256*: Server Side Encryption, especifica un cifrado AES256 del lado del servidor para los objetos S3.
-- *--delete*: Elimina los archivos y directorios en el bucket S3 (RemotePathBucketS3) que ya no existan en el origen (SourcePathLocalData).
-- *--include*: Incluye los archivos en la sincronización. En este caso indicando "*" incluiría todo.
-- *--exclude*: Excluye archivos en la sincronización. En este caso omite los archivos "*.DS_Store" generados automáticamente en sistemas MacOS. Este parámetro es opcional.
+- *--delete*: Elimina los archivos en el bucket S3 (RemotePathBucketS3) que ya no existan en el origen local (SourcePathLocalData).
 - *--exact-timestamps*: Conserva las fechas originales de los archivos al sincronizarlos desde un bucket S3 a local, asegurando que las marcas de tiempo de modificación se mantengan exactas.
+- *--include*: Incluye los archivos en la sincronización. En este caso indicando "*" incluiría todo.
+- *--exclude*: Excluye archivos en la sincronización. En este caso, omite los archivos "*.DS_Store", generados automáticamente por sistemas macOS. Este parámetro es opcional.
 
 > Referencia AWS CLI S3 Sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
 
