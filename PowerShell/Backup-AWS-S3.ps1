@@ -1,5 +1,9 @@
-$PSDefaultParameterValues['*:Encoding'] = 'utf8'
-# [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+# Afecta a los cmdlets con parámetro -Encoding	
+$PSDefaultParameterValues['*:Encoding'] = 'UTF8'
+# Afecta a la salida de consola (stdout)
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+# Afecta la salida de texto cuando se redirecciona ese texto a un archivo.
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Montar unidad externa USB donde se realizará una segunda copia con Veeam Backup.
 Function Set-USBDriveMount {
@@ -60,11 +64,11 @@ Function Set-VeraCryptMount {
     $script:PasswdFilePath = $PasswdFilePath
 
     # Paths de los ficheros de passwords VeraCrypt. Almacenar la cadena segura de la contraseña en un puntero de memoria.
-    $PasswdVCKdbx = Get-Content -Path ($PasswdFilePath + "PasswdVCKdbx") -Encoding utf8 | ConvertTo-SecureString
+    $PasswdVCKdbx = Get-Content -Path ($PasswdFilePath + "PasswdVCKdbx") -Encoding UTF8 | ConvertTo-SecureString
     $ptr1 = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PasswdVCKdbx)
     $PlainPasswdVCKdbx = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr1)
 
-    $PasswdVCKeyx = Get-Content -Path ($PasswdFilePath + "PasswdVCKeyx") -Encoding utf8 | ConvertTo-SecureString
+    $PasswdVCKeyx = Get-Content -Path ($PasswdFilePath + "PasswdVCKeyx") -Encoding UTF8 | ConvertTo-SecureString
     $ptr2 = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PasswdVCKeyx)
     $PlainPasswdVCKeyx = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($ptr2)
 
@@ -141,13 +145,13 @@ Function Compress-7ZipEncryption {
     )
 
     # Paths de los ficheros de passwords 7zip. Almacenar la cadena segura de la contraseña en un puntero de memoria.
-    $Passwd7zKdbx = Get-Content -Path ($PasswdFilePath + "Passwd7zKdbx") -Encoding utf8 | ConvertTo-SecureString
+    $Passwd7zKdbx = Get-Content -Path ($PasswdFilePath + "Passwd7zKdbx") -Encoding UTF8 | ConvertTo-SecureString
     $ptr1 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($Passwd7zKdbx)
 
-    $Passwd7zKeyx = Get-Content -Path ($PasswdFilePath + "Passwd7zKeyx") -Encoding utf8 | ConvertTo-SecureString
+    $Passwd7zKeyx = Get-Content -Path ($PasswdFilePath + "Passwd7zKeyx") -Encoding UTF8 | ConvertTo-SecureString
     $ptr2 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($Passwd7zKeyx)
 
-    $Passwd7zKpxc = Get-Content -Path ($PasswdFilePath + "Passwd7zKpxc") -Encoding utf8 | ConvertTo-SecureString
+    $Passwd7zKpxc = Get-Content -Path ($PasswdFilePath + "Passwd7zKpxc") -Encoding UTF8 | ConvertTo-SecureString
     $ptr3 = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($Passwd7zKpxc)
 
     if (-not $WorkPathTemp.EndsWith('\')) {
@@ -233,8 +237,8 @@ J:\PATH_4\Musica
 
     # Mostrar fecha y hora del comienzo del proceso de backup al princpio del log.
     $StartTime = (Get-Date)
-    Write-Output "Backup comienza: $CurrentDateTime" | Out-File -FilePath $BackupLog -Append
-    Write-Output "___________________________________`n" | Out-File -FilePath $BackupLog -Append
+    Write-Output "Backup comienza: $CurrentDateTime" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
+    Write-Output "___________________________________`n" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
 
     # Sincronizar datos locales al bucket S3. Importar e iterar las líneas con los paths locales establecidos en el fichero PathLocalData.txt.
     $TXTPathLines | Foreach-Object {
@@ -243,24 +247,24 @@ J:\PATH_4\Musica
         # Mantener la misma estructura jerárquica de directorios en la subida al bucket S3 cuando se especifacan múltiples paths locales en PathLocalData.txt.
         $PathRelativeBucketS3  = ($PathLocalData.SubString(2) -Replace '\\', '/')
 
-        aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $PathRelativeBucketS3)" --sse AES256 --delete --include "*" --exclude "*.DS_Store" | `
+        aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $PathRelativeBucketS3)" --sse AES256 --delete --include "*" --exclude "*.DS_Store" --exact-timestamps | `
         # Eliminar líneas del proceso de sincronización en el output del BackupLog y quedarse solo con las líneas de los cambios de ficheros y directorios.
         ForEach-Object {
             if (($_ -notlike "*remaining*") -and ($_ -notlike "*calculating*")) {
                 # Eliminar espacios en blanco iniciales y finales de cada línea en output al fichero $BackupLog.
-                $_.Trim() | Out-File -FilePath $BackupLog -Encoding utf8 -Append
+                $_.Trim() | Out-File -FilePath $BackupLog -Append -Encoding UTF8
             }
         }
     }
 
-    Write-Output "___________________________________" | Out-File -FilePath $BackupLog -Append
+    Write-Output "___________________________________" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
     $EndTime = (Get-Date)
     $ElapsedTime = $($EndTime-$StartTime).ToString().SubString(0,8)
     # Resetear $CurrentDateTime para obtener la hora actual hasta este momento del proceso de backup.
     # Establecer $CurrentDateTime en este punto como variable de ámbito de script que también será usada en Send-EmailMessageAndFile.
     $CurrentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
-    Write-Output "Backup finaliza: $CurrentDateTime`n" | Out-File -FilePath $BackupLog -Append
-    Write-Output "Tiempo total transcurrido: $ElapsedTime" | Out-File -FilePath $BackupLog -Append
+    Write-Output "Backup finaliza: $CurrentDateTime`n" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
+    Write-Output "Tiempo total transcurrido: $ElapsedTime" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
 }
 
 # Enviar notificación del fichero de log y su contenido adjunto vía ChatBot de Telegram.
@@ -346,7 +350,7 @@ Function Send-EmailMessageAndFile {
 
     # Establecer credenciales email userFrom.
     # Obtener password cifrada del fichero y establecer credenciales email.
-    $SecPasswdEmail = Get-Content ($PasswdFilePath + "PasswdEmail") -Encoding utf8 | ConvertTo-SecureString
+    $SecPasswdEmail = Get-Content ($PasswdFilePath + "PasswdEmail") -Encoding UTF8 | ConvertTo-SecureString
     $CredsEmail = New-Object System.Management.Automation.PSCredential ($UserFromEmail, $SecPasswdEmail)
     # Almacenar la cadena segura de la contraseña en un puntero de memoria.
     $ptr = [System.Runtime.InteropServices.Marshal]::SecureStringToCoTaskMemUnicode($SecPasswdEmail)
@@ -376,8 +380,8 @@ Set-VeraCryptMount -PasswdFilePath "C:\PATH\PasswdBackup\" -VCFilePath "C:\PATH\
 Compress-7ZipEncryption -PathKdbx "Y:\file.kdbx" -PathKeyx "Z:\file.keyx" `
                         -File7zKpxc "C:\PATH\file.7z" -RemoteFile7zKpxc "H:\PATH\Datos\" `
                         -WorkPathTemp "C:\PATH\Temp\"
-Set-VeraCryptUnmount
 Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathBucketS3 "s3://BucketS3Name/Backup" -WorkPath "C:\PATH\"
+Set-VeraCryptUnmount
 Send-TelegramBotMessageAndFile -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendFile
 Send-EmailMessageAndFile -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
 Set-USBDriveUnmount -Seconds "XXXX"
