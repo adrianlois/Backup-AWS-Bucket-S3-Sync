@@ -247,7 +247,8 @@ J:\PATH_4\Musica
         # Mantener la misma estructura jerárquica de directorios en la subida al bucket S3 cuando se especifacan múltiples paths locales en PathLocalData.txt.
         $PathRelativeBucketS3  = ($PathLocalData.SubString(2) -Replace '\\', '/')
 
-        aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $PathRelativeBucketS3)" --sse AES256 --delete --include "*" --exclude "*.DS_Store" --exact-timestamps | `
+        # Realizar la sincronización del backup de Local a S3.
+        aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $PathRelativeBucketS3)" --sse AES256 --delete --exact-timestamps --include "*" --exclude "*.DS_Store" | `
         # Eliminar líneas del proceso de sincronización en el output del BackupLog y quedarse solo con las líneas de los cambios de ficheros y directorios.
         ForEach-Object {
             if (($_ -notlike "*remaining*") -and ($_ -notlike "*calculating*")) {
