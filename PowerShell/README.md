@@ -14,6 +14,7 @@
     - [Identity and Access Management (IAM)](#identity-and-access-management-iam)
     - [Configuración "Access Key" y "Secret Access key"](#configuración-access-key-y-secret-access-key)
     - [Configuración de VeraCrypt para el uso de KeePassXC](#configuración-de-veracrypt-para-el-uso-de-keepassxc)
+    - [Cambiar la ubicación predeterminada de los archivos *config* y *credentials* de AWS CLI para su uso desde VeraCrypt](#cambiar-la-ubicación-predeterminada-de-los-archivos-config-y-credentials-de-aws-cli-para-su-uso-desde-veracrypt)
   - [Descripción de Funciones: Backup-AWS-S3.ps1](#descripción-de-funciones-backup-aws-s3ps1)
     - [Set-USBDriveMount](#set-usbdrivemount)
     - [Set-USBDriveUnmount](#set-usbdriveunmount)
@@ -39,17 +40,17 @@ Script en Powershell para automatizar el proceso de sincronización de datos loc
 
 ▶ Funciones específicas para montar y desmontar unidades externas USB donde se almacenarán las copias de Veeam Backup.
 
-▶ Funciones para gestionar volúmenes virtuales cifrados que aíslan de forma independiente los archivos kdbx y keyx de KeePassXC, manteniéndolos fuera del alcance del sistema operativo.
+▶ Funciones para gestionar volúmenes virtuales cifrados que aíslan de forma independiente los archivos kdbx, keyx de KeePassXC, y los archivos config y credentiales de .aws para la conexión con AWS CLI, manteniéndolos fuera del alcance del sistema operativo.
 
-▶ Realizar compresiones 7zip cifrada de forma simétrica, usando adicionalmente un método de capas de ficheros comprimidos para almacenar la BBDD (kdbx) y el fichero con la clave de seguridad adicional (keyx) de KeePassXC.
+▶ Realizar compresiones 7zip cifrada de forma simétrica, usando adicionalmente un método de capas de archivos comprimidos para almacenar la BBDD (kdbx) y el archivo con la clave de seguridad adicional (keyx) de KeePassXC.
 
-▶ Sincronizar con AWS CLI los datos locales con el objeto (carpeta/directorio) del bucket S3.
+▶ Sincronizar con AWS CLI archivos locales a un bucket S3.
 
-▶ Generar un fichero log de todo el proceso.
+▶ Generar un archivo log de todo el proceso.
 
-▶ Enviar el fichero de log vía Email.
+▶ Enviar el archivo de log vía Email.
 
-▶ Enviar el fichero de log, contenido en formato de mensaje o ambas vía ChatBot de Telegram.
+▶ Enviar el archivo de log, contenido en formato de mensaje o ambas vía ChatBot de Telegram.
 
 ## Requisitos previos
 ### Política de permisos en AWS S3
@@ -62,14 +63,16 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 ### Identity and Access Management (IAM)
 1. Crear un nuevo usuario con las siguientes condiciones:
 - Sin ningún tipo de privilegio administrativo, tampoco podrá iniciar sesión en la consola de administración de AWS.
-- Solo se podrá conectar a través de su ID y clave de acceso (será la que se establezca posteriormente en el fichero *%USERPROFILE%\\.aws\credentials*).
+- Solo se podrá conectar a través de su ID y clave de acceso (será la que se establezca posteriormente en el archivo *%USERPROFILE%\\.aws\credentials*).
 
 ![Credenciales sesion usuario aws](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/credenciales_sesion_usuario_aws.png)
 
 2. Crear una nueva política donde solo se especifique:
 - Servicio: S3
-- Acciones: Enumeration (ListBucket), Escritura (DeleteObject, PutObject)
-- Recursos: Especificar únicamente el recuro ARN del bucket y un "BucketS3Name/*" que aplicarán a todos los objetos dentro de ese bucket.
+- Acciones y efecto: Permitir enumerar objetos, pero no acceder a los datos de los objetos directamente (ListBucket), permitir cargar objetos (PutObject) y permitir eliminar objetos (DeleteObject).
+- Recursos: Especificar únicamente el recurso ARN del bucket S3 "BucketS3Name/folder1/*" que aplicará a todos los objetos dentro de ese directorio. Esto asegura que el usuario no podrá crear ni eliminar objetos en ninguna otra parte del bucket, fuera del prefijo folder1.
+  - *BucketS3Name*: Nombre del bucket S3.
+  - *Folder1*: Nombre del directorio raíz donde se almacenan los objetos del backup a sincronizar.
 
 **Resumen de la política - JSON**
 
@@ -78,17 +81,24 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "VisualEditor0",
+            "Sid": "ListBucketWithPrefix",
+            "Effect": "Allow",
+            "Action": "s3:ListBucket",
+            "Resource": "arn:aws:s3:::BucketS3Name",
+            "Condition": {
+                "StringLike": {
+                    "s3:prefix": "Folder1/*"
+                }
+            }
+        },
+        {
+            "Sid": "ObjectLevelActions",
             "Effect": "Allow",
             "Action": [
                 "s3:PutObject",
-                "s3:ListBucket",
                 "s3:DeleteObject"
             ],
-            "Resource": [
-                "arn:aws:s3:::BucketS3Name",
-                "arn:aws:s3:::BucketS3Name/*"
-            ]
+            "Resource": "arn:aws:s3:::BucketS3Name/Folder1/*"
         }
     ]
 }
@@ -98,7 +108,7 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 
 3. [Instalación de AWSCLI en Windows](https://docs.aws.amazon.com/es_es/cli/latest/userguide/install-windows.html).
 
-4. Establecer las access keys en AWSCLI. En un entorno Windows estas keys quedarán almacenadas en el fichero "%userprofile%\.aws\credentials" y la configuración de región en "%userprofile%\.aws\config". 
+4. Establecer las access keys en AWSCLI. En un entorno Windows estas keys quedarán almacenadas en el archivo "%userprofile%\.aws\credentials" y la configuración de región en "%userprofile%\.aws\config". 
 
 > [!NOTE]
 > Aunque estas claves sean accesibles para el usuario local, no representan un riesgo, ya que los permisos establecidos solo permiten subir archivos al bucket S3, sin opción de descargarlos.
@@ -139,6 +149,40 @@ Para un uso habitual de KeePassXC. El script [Start-VeraCrypt-KPXC.ps1](#start-v
   - Activar: Eliminar contraseñas guardadas al salir.
   - Activar: Eliminar contraseñas guardadas al desmontar automáticamente.
 
+### Cambiar la ubicación predeterminada de los archivos *config* y *credentials* de AWS CLI para su uso desde VeraCrypt
+
+Siguiendo el principio de aislamiento aplicado en el caso del alamacenamiento de los archivos de KeePassXC, en caso de un incidente de seguridad tipo ransomware o simplemente que se puedan ver comprometidos. Los archivos config y credentials de AWS CLI se almacenarán en un volumen cifrado de VeraCrypt, manteniéndolos inaccesibles e independientes del sistema, excepto en el momento de ejecutarse el script de backup programado.
+
+Por defecto, estos archivos estarán ubicados en:
+- %USERPROFILE%\\.aws\config
+- %USERPROFILE%\\.aws\credentials
+
+Para evitar que un atacante acceda a la "aws_secret_access_key" y "aws_access_key_id" en el archivo credentials, se almacenarán en un volumen de VeraCrypt. Para ello, se configurarán variables de entorno para que AWS CLI acceda a ellos desde su nueva ubicación.
+
+**Establecer nuevas variables de entorno para los archivos *config* y *credentials***
+
+Se establecen las siguientes variables de entorno a nivel de usuario para [redirigir la ruta de los archivos "config" y "credentials" de AWS CLI](https://docs.aws.amazon.com/sdkref/latest/guide/file-location.html).
+
+- AWS_CONFIG_FILE: Variable de entorno del archivo de "config".
+- AWS_SHARED_CREDENTIALS_FILE: Variable de entorno del archivo de "credentials".
+
+Previamente, se copian los archivos config y credentials a uno de los volúmenes de VeraCrypt (Z:\\).
+
+```ps
+setx AWS_CONFIG_FILE Z:\config
+setx AWS_SHARED_CREDENTIALS_FILE Z:\credentials
+```
+
+Cerramos la sesión de PowerShell para actualizar los cambios y verificamos que AWS CLI accede a las nuevas rutas.
+
+```ps
+echo $Env:AWS_SHARED_CREDENTIALS_FILE
+echo $Env:AWS_CONFIG_FILE
+```
+```ps
+aws configure list
+```
+
 ## Descripción de Funciones: Backup-AWS-S3.ps1
 ### Set-USBDriveMount
 
@@ -169,9 +213,9 @@ Set-USBDriveUnmount -Seconds "XXXX"
 
 ### Set-VeraCryptMount
 
-Esta función monta los volúmenes .hc de VeraCrypt que almacenan los archivos kdbx y keyx de KeePassXC. Luego, se invoca la función [Compress-7ZipEncryption](#compress-7zipencryption) y, una vez finalizado ese proceso, se llama a la función [Set-VeraCryptUnmount](#set-veracryptunmount).
+Esta función monta los volúmenes .hc de VeraCrypt que almacenan los archivos KeePassXC (kdbx y keyx) y los archivos de configuración de AWS CLI (config y credentials). Luego, se invoca la función [Compress-7ZipEncryption](#compress-7zipencryption) y, una vez finalizado ese proceso, se llama a la función [Set-VeraCryptUnmount](#set-veracryptunmount).
 
-Crear los ficheros con la password cifrada que se usarán para montar los volúmenes de VeraCrypt.
+Crear los archivos con la password cifrada que se usarán para montar los volúmenes de VeraCrypt.
 
 ```ps
 "Passw0rd.VCKdbx" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\PasswdVCKdbx"
@@ -182,8 +226,8 @@ Crear los ficheros con la password cifrada que se usarán para montar los volúm
 
 - *PasswdFilePath*: Ruta de la carpeta donde se guardan los archivos que contienen las contraseñas cifradas utilizadas en el proceso de compresión.
 - *VCFilePath*: Ruta de los archivos de volúmenes .hc de VeraCrypt.
-- *DriveLetterVCKdbx*: Letra de unidad que se asigna al montar el volumen donde se almacena el fichero kdbx.
-- *DriveLetterVCKeyx*: Letra de unidad que se asigna al montar el volumen donde se almacena el fichero keyx. 
+- *DriveLetterVCKdbx*: Letra de unidad que se asigna al montar el volumen donde se almacena el archivo kdbx.
+- *DriveLetterVCKeyx*: Letra de unidad que se asigna al montar el volumen donde se almacena el archivo keyx. 
 
 ```ps
 Set-VeraCryptMount -PasswdFilePath "C:\PATH\PasswdBackup\" -VCFilePath "C:\PATH\VeraCrypt\" `
@@ -191,7 +235,7 @@ Set-VeraCryptMount -PasswdFilePath "C:\PATH\PasswdBackup\" -VCFilePath "C:\PATH\
 ```
 
 **Parámetros de montaje VeraCrypt.exe:**
-- */volume*: Especificar la ruta del volumen. En este caso, el fichero contenedor .hc.
+- */volume*: Especificar la ruta del volumen. En este caso, el archivo contenedor .hc.
 - */letter*: Asigna una letra de unidad disponible al volumen establecido. 
 - */password*: Establece la password para descifrar el volumen.
 - */protectMemory*: Activa un mecanismo que protege la memoria del proceso VeraCrypt para que otros procesos que no sean administradores no puedan acceder a ella.
@@ -203,7 +247,7 @@ Set-VeraCryptMount -PasswdFilePath "C:\PATH\PasswdBackup\" -VCFilePath "C:\PATH\
 
 ### Set-VeraCryptUnmount
 
-Al finalizar el proceso de compresión y cifrado de los archivos relacionados con la base de datos (kdbx) y el archivo de clave (keyx) de KeePassXC en la función [Compress-7ZipEncryption](#compress-7zipencryption), esta función desmonta los volúmenes de VeraCrypt y finaliza los procesos "VeraCrypt.exe" y "KeePassXC", que permanecen en segundo plano tras haberse iniciado previamente con la función [Set-VeraCryptMount](#set-veracryptmount) o al comprobar que ya estaban montados manualmente mediante el script [Start-VeraCrypt-KPXC.ps1](#start-veracrypt-kpxc).
+Al finalizar el proceso de compresión y cifrado de los archivos relacionados con la base de datos (kdbx) y el archivo de clave (keyx) de KeePassXC en la función [Compress-7ZipEncryption](#compress-7zipencryption), y tras sincronizar los archivos hacia el bucket S3 en la función [Invoke-BackupAWSS3](#invoke-backupawss3), Set-VeraCryptUnmount desmonta los volúmenes de VeraCrypt y finaliza los procesos "VeraCrypt.exe" y "KeePassXC", que permanecen en segundo plano tras haberse iniciado previamente con la función [Set-VeraCryptMount](#set-veracryptmount) o al comprobar que ya estaban montados manualmente mediante el script [Start-VeraCrypt-KPXC.ps1](#start-veracrypt-kpxc).
 
 **Parámetros de desmontaje VeraCrypt.exe:**
 - */dismount*: Si no especifica ninguna letra de unidad, desmontará todos los volúmenes de VeraCrypt montados actualmente.
@@ -216,7 +260,7 @@ Al finalizar el proceso de compresión y cifrado de los archivos relacionados co
 
 ### Compress-7ZipEncryption
 
-Esta función comprime de forma cifrada en formato 7z (7zip) y usando un método por capas los ficheros relacionados con la BBDD (kdbx) + key file (keyx) de KeePassXC.
+Esta función comprime de forma cifrada en formato 7z (7zip) y usando un método por capas los archivos relacionados con la BBDD (kdbx) + key file (keyx) de KeePassXC.
 
 > [!NOTE]
 > **¿Por qué usar el módulo 7zip y no Compress-Archive en formato Zip (System.IO.Compression.ZipArchive)?**
@@ -229,7 +273,7 @@ Install-Module -Name 7Zip4Powershell
 Import-Module -Name 7Zip4Powershell
 ```
 
-1. Crear los ficheros con la password cifrada que se usarán para todas compresiones de estos ficheros.
+1. Crear los archivos con la password cifrada que se usarán para todas compresiones de estos archivos.
 
 ```ps
 "Passw0rd.Kdbx" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\Passwd7zKdbx"
@@ -239,10 +283,10 @@ Import-Module -Name 7Zip4Powershell
 
 **Parámetros de la función:**
 
-- *PathKdbx*: Ruta del fichero de la BBDD kdbx de KeePassXC.
-- *PathKeyx*: Ruta del fichero de de seguridad adicional keyx de KeePassXC.
-- *File7zKpxc*: Ruta local del fichero final ya comprimido.
-- *RemoteFile7zKpxc*: Ruta remota donde se moverá del fichero final ya comprimido.
+- *PathKdbx*: Ruta del archivo de la BBDD kdbx de KeePassXC.
+- *PathKeyx*: Ruta del archivo de de seguridad adicional keyx de KeePassXC.
+- *File7zKpxc*: Ruta local del archivo final ya comprimido.
+- *RemoteFile7zKpxc*: Ruta remota donde se moverá del archivo final ya comprimido.
 - *WorkPathTemp*: Ruta temporal donde se realizará el proceso aislado de compresión. Se recomienda crear una carpeta Temp en el mismo directorio donde se ejecute el script.
 
 ```ps
@@ -253,13 +297,16 @@ Compress-7ZipEncryption -PathKdbx "Y:\file.kdbx" -PathKeyx "Z:\file.keyx" `
 
 ### Invoke-BackupAWSS3
 
-Esta función sincroniza los ficheros y directorios de una o varias rutas locales origen a un destino en un bucket S3 de AWS.
+Esta función sincroniza los archivos y directorios de una o varias rutas locales origen a un destino en un bucket S3 de AWS.
+
+> [!NOTE]
+> AWS CLI lee los archivos *config* y *credentials* desde un volumen de VeraCrypt previammente montado con [Set-VeraCryptMount](#set-veracryptmount), y tras ejecutar esta función, [Set-VeraCryptUnmount](#set-usbdriveunmount) los desmonta para dejarlos nuevamente inaccesibles.
 
 **Parámetros de la función:**
 
-- *SourcePathLocalData*: Ruta absoluta del fichero *PathLocalData.txt*, en este fichero se especifican los directorios donde será el origen de sincronización al bucket S3. Especificar los paths necesarios en  nuevas líneas.
-- *RemotePathBucketS3*: Ruta destino del bucket S3 donde se almacenerá y realizará la sincronización de paths locales especificados en el fichero *PathLocalData.txt*.  
-- *WorkPath*: Ruta absoluta raíz donde se realizará y tomará de referencia para el proceso de sincronización así como la creación del fichero de log que se creará en la tarea de sincronización.
+- *SourcePathLocalData*: Ruta absoluta del archivo *PathLocalData.txt*, en este archivo se especifican los directorios donde será el origen de sincronización al bucket S3. Especificar las rutas necesarios en  nuevas líneas.
+- *RemotePathBucketS3*: Ruta destino del bucket S3 donde se almacenerá y realizará la sincronización de las rutas locales especificados en el archivo *PathLocalData.txt*.  
+- *WorkPath*: Ruta absoluta raíz donde se realizará y tomará de referencia para el proceso de sincronización así como la creación del archivo de log que se creará en la tarea de sincronización.
 
 ```ps
 Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathBucketS3 "s3://BucketS3Name/Backup" -WorkPath "C:\PATH\"
@@ -276,14 +323,20 @@ H:\PATH_3\Videos
 J:\PATH_4\Musica
 ```
 
-**Parámetros de sincronización aws s3 sync (Local a Remoto):**
+**Parámetros de sincronización aws s3 sync - Local a S3:**
 
-Verifica si uno o más ficheros y/o directorios locales existentes se han actualizado comprobando su nombre, tamaño y el timestamp. Actualmente no creo que compruebe los cambios en los hashes del fichero.
+Verifica si uno o más archivos y/o directorios locales existentes se han actualizado comprobando su nombre, tamaño y el timestamp. Actualmente no creo que compruebe los cambios en los hashes del archivo.
 
+```ps
+aws s3 sync "$($PathLocalData)" "$($RemotePathBucketS3 + $PathRelativeBucketS3)" --sse AES256 --delete --include "*" --exclude "*.DS_Store" --exact-timestamps
+```
+
+- *aws s3 sync*: En este caso, sincroniza en forma de espejo los archivos locales a un bucket S3 verificando su presencia en local, comparando su tamaño y la fecha de última modificación, creándolos o eliminándolos en S3 según sea necesario.
 - *--sse AES256*: Server Side Encryption, especifica un cifrado AES256 del lado del servidor para los objetos S3.
-- *--delete*: Elimina los ficheros/directorios en el bucket S3 (RemotePathBucketS3) que ya no existan en el origen (SourcePathLocalData).
-- *--include*: Incluye los ficheros en la sincronización. En este caso indicando "*" incluiría todo.
-- *--exclude*: Excluye ficheros en la sincronización. En este caso omite los ficheros "*.DS_Store" generados automáticamente en sistemas MacOS. Este parámetro es opcional.
+- *--delete*: Elimina los archivos y directorios en el bucket S3 (RemotePathBucketS3) que ya no existan en el origen (SourcePathLocalData).
+- *--include*: Incluye los archivos en la sincronización. En este caso indicando "*" incluiría todo.
+- *--exclude*: Excluye archivos en la sincronización. En este caso omite los archivos "*.DS_Store" generados automáticamente en sistemas MacOS. Este parámetro es opcional.
+- *--exact-timestamps*: Conserva las fechas originales de los archivos al sincronizarlos desde un bucket S3 a local, asegurando que las marcas de tiempo de modificación se mantengan exactas.
 
 > Referencia AWS CLI S3 Sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
 
@@ -293,7 +346,7 @@ Invoke-BackupAWSS3 -SourcePathLocalData "C:\PATH\PathLocalData.txt" -RemotePathB
 
 ### Send-TelegramBotMessageAndDocument
 
-Esta función envía una notificación del fichero de log y su contenido adjunto vía ChatBot de Telegram. Según los parámetros especificados en la función es posible enviar el fichero de log adjunto y también el tiempo de comienzo y tiempo total transcurrido del proceso de backup o enviar el fichero adjunto y también el contenido del fichero en formato de mensaje al ChatBot. 
+Esta función envía una notificación del archivo de log y su contenido adjunto vía ChatBot de Telegram. Según los parámetros especificados en la función es posible enviar el archivo de log adjunto y también el tiempo de comienzo y tiempo total transcurrido del proceso de backup o enviar el archivo adjunto y también el contenido del archivo en formato de mensaje al ChatBot. 
 
 Esta función es compatible con versiones de PowerShell 6.1.0 o superiores.
 
@@ -319,8 +372,8 @@ Establecer una imagen a mostrar para para el bot.
 
 - *BotToken*: Token del bot generado con @BotFather.
 - *ChatID*: ID de chat obtenido con @RawDataBot o @MyIDBot.
-- *SendMessage*: Si este parámetro está presente enviará solamente el contenido del fichero backup log en formato de texto al ChatBot.
-- *SendDocument*: Si este parámetro está presente enviará al ChatBot el fichero de backup log adjunto y también enviará formato texto la fecha y hora del comienzo de backup y el tiempo total transcurrido del proceso de sincronización con el bucket S3.
+- *SendMessage*: Si este parámetro está presente enviará solamente el contenido del archivo backup log en formato de texto al ChatBot.
+- *SendDocument*: Si este parámetro está presente enviará al ChatBot el archivo de backup log adjunto y también enviará formato texto la fecha y hora del comienzo de backup y el tiempo total transcurrido del proceso de sincronización con el bucket S3.
 
 Diferencias entre establecer **SendMessage** y **SendDocument**:
 
@@ -329,30 +382,30 @@ Diferencias entre establecer **SendMessage** y **SendDocument**:
 ```ps
 Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendDocument
 ```
-![Envio Telegram Bot fichero backup log SendDocument](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendDocument.png)
+![Envio Telegram Bot archivo backup log SendDocument](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendDocument.png)
 
 - -SendMessage
 
 ```ps
 Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendMessage
 ```
-![Envio Telegram Bot fichero backup log SendMessage](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessage.png)
+![Envio Telegram Bot archivo backup log SendMessage](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessage.png)
 
 - -SendMessage y -SendDocument
 
 ```ps
 Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendMessage -SendDocument
 ```
-![Envio Telegram Bot fichero backup log SendMessage y SendDocument](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessageDocument.png)
+![Envio Telegram Bot archivo backup log SendMessage y SendDocument](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessageDocument.png)
 
 ### Send-EmailMessageAndDocument
 
-Esta función envía un correo del fichero de log adjunto y su contenido vía procolo SMTP de Outlook. 
+Esta función envía un correo del archivo de log adjunto y su contenido vía procolo SMTP de Outlook. 
 
 > [!NOTE]
 > Por seguridad Gmail ya no permite esta opción. https://support.google.com/accounts/answer/6010255
 
-1. Crear el fichero con la password cifrada que será usada para la autenticación de la cuenta de correo de Outlook. Deben respetarse los nombres de salida para que coincida con el de la función.
+1. Crear el archivo con la password cifrada que será usada para la autenticación de la cuenta de correo de Outlook. Deben respetarse los nombres de salida para que coincida con el de la función.
 
 ```ps
 "Passw0rd.Email" | ConvertTo-SecureString -AsPlainText -Force | ConvertFrom-SecureString | Out-File -Encoding utf8 "C:\PATH\PasswdBackup\PasswdEmail"
@@ -369,9 +422,9 @@ Send-EmailDocumentAndMessage -UserFromEmail "userFrom@outlook.es" -UserToEmail "
 
 ## Backup-AWS-S3-Trigger.bat
 
-Esto llamará a un fichero PowerShell .ps1 desde un fichero de proceso por lotes .bat. Establecer el path donde se encuentra el fichero Backup-AWS-S3.ps1.
+Esto llamará a un archivo PowerShell .ps1 desde un archivo de proceso por lotes .bat. Establecer la ruta donde se encuentra el archivo Backup-AWS-S3.ps1.
 
-Si creamos una tarea programada en Windows (taskschd.msc) para una ejecución programada, la forma más efectiva sería establecer directamente un fichero de proceso por lotes .bat y que este llame al fichero PowerShell .ps1 donde cargará e invocará al resto de funciones.
+Si creamos una tarea programada en Windows (taskschd.msc) para una ejecución programada, la forma más efectiva sería establecer directamente un archivo de proceso por lotes .bat y que este llame al archivo PowerShell .ps1 donde cargará e invocará al resto de funciones.
 
 ## USBDrive-MountUnmount
 ### Invoke-USBDriveMountUnmount.ps1
@@ -406,17 +459,26 @@ Para poder ejecutar KeePassXC de forma cómoda a través de este script, se pued
 ## PasswdBackup
 ### New-PasswdFile.ps1
 
-Este script automatizará el proceso de creación de los ficheros de password cifradas que serán utilizados en las funciones: *Set-VeraCryptMount*, *Compress-7ZipEncryption* y *Send-EmailDocumentAndMessage*.
+Este script automatizará el proceso de creación de los archivos de password cifradas que serán utilizados en las funciones: *Set-VeraCryptMount*, *Compress-7ZipEncryption* y *Send-EmailDocumentAndMessage*.
 
 ## Recuperación Backup: S3 a Local
 
-Copiar ficheros y directorios del bucket S3 a local.
+Copiar archivos desde un bucket S3 a una ubicación local.
 
-Si realimos este proceso con el mismo usuario de AWS que estamos usando para la sincronización, será necesario otorgarle permisos adicionales para poder descargar ficheros y carpetas desde un bucket S3 a local.
+**Opción 1**
+
+Si realizamos este proceso con el mismo usuario de AWS que utilizamos para la sincronización del backup, será necesario otorgarle permisos adicionales para poder descargar archivos (s3:GetObject) desde el bucket S3 a una ubicación local usando AWS CLI con el comando "aws s3 cp".
 
 > Referencia AWS CLI S3 cp: https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/cp.html
 
-**Pull backup: S3 > Local.**
+**Pull backup: S3 a Local**
 ```
 aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
 ```
+
+**Opción 2**
+
+Realizar el mismo proceso que en la opción 1 en relación a los permisos de usuario, pero podemos utilizar una herramienta de terceros en lugar de AWS CLI para descargar los archivos.
+
+- https://cyberduck.io
+- https://s3browser.com
