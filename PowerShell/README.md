@@ -63,7 +63,8 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 ### Identity and Access Management (IAM)
 1. Crear un nuevo usuario con las siguientes condiciones:
 - Sin ningún tipo de privilegio administrativo, tampoco podrá iniciar sesión en la consola de administración de AWS.
-- Solo se podrá conectar a través de su ID y clave de acceso (será la que se establezca posteriormente en el archivo *%USERPROFILE%\\.aws\credentials*).
+- Solo se podrá conectar a través de su ID y clave de acceso, será la que se establezca en el archivo *%USERPROFILE%\\.aws\credentials*.
+  - [Mejorar la seguridad local de acceso a estos ficheros](#cambiar-la-ubicación-predeterminada-de-los-archivos-config-y-credentials-de-aws-cli-para-su-uso-desde-veracrypt).
 
 ![Credenciales sesion usuario aws](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/credenciales_sesion_usuario_aws.png)
 
@@ -108,10 +109,13 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 
 3. [Instalación de AWSCLI en Windows](https://docs.aws.amazon.com/es_es/cli/latest/userguide/install-windows.html).
 
-4. Establecer las access keys en AWSCLI. En un entorno Windows estas keys quedarán almacenadas en el archivo "%userprofile%\.aws\credentials" y la configuración de región en "%userprofile%\.aws\config". 
+4. Establecer las access keys en AWSCLI. En un entorno Windows estas keys, por defecto quedarán almacenadas en el archivo "%userprofile%\.aws\credentials" y la configuración de región en "%userprofile%\.aws\config".
 
 > [!NOTE]
 > Aunque estas claves sean accesibles para el usuario local, no representan un riesgo, ya que los permisos establecidos solo permiten subir archivos al bucket S3, sin opción de descargarlos.
+> 
+> Más adelante se comenta como añadir una capa extra para [mejorar la seguridad local de acceso a estos ficheros](#cambiar-la-ubicación-predeterminada-de-los-archivos-config-y-credentials-de-aws-cli-para-su-uso-desde-veracrypt).
+
 
 ```
 $ aws configure
@@ -479,7 +483,9 @@ aws s3 cp s3://bucket/backup/ <LOCAL_PATH> --recursive
 
 **Opción 2**
 
-Realizar el mismo proceso que en la opción 1 en relación a los permisos de usuario, pero podemos utilizar una herramienta de terceros en lugar de AWS CLI para descargar los archivos.
+Realizar el mismo proceso que en la opción 1 en relación a los permisos de usuario, pero utilizar una herramienta de terceros para descargar los archivos en lugar de AWS CLI.
 
-- https://cyberduck.io
 - https://s3browser.com
+- https://winscp.net
+- https://cyberduck.io
+- https://mountainduck.io (monta un bucket S3 como una unidad local en el sistema)
