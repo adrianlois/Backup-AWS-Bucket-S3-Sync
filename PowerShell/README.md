@@ -1,38 +1,36 @@
-# Backup AWS Bucket S3 Sync - PowerShell
+<h1 align="center">Backup AWS Bucket S3 Sync - PowerShell</h1>
 
 <div align="center">
   <img src="../screenshots/backup_aws_bucket_s3_sync_logo.png" width="350" />
 </div>
 
-## Índice
+<h1>Índice</h1>
 
-- [Backup AWS Bucket S3 Sync - PowerShell](#backup-aws-bucket-s3-sync---powershell)
-  - [Índice](#índice)
-  - [Descripción](#descripción)
-  - [Requisitos previos](#requisitos-previos)
-    - [Política de permisos en AWS S3](#política-de-permisos-en-aws-s3)
-    - [Identity and Access Management (IAM)](#identity-and-access-management-iam)
-    - [Configuración "Access Key" y "Secret Access key"](#configuración-access-key-y-secret-access-key)
-    - [Configuración de VeraCrypt para el uso de KeePassXC](#configuración-de-veracrypt-para-el-uso-de-keepassxc)
-    - [Cambiar la ubicación predeterminada de los archivos *config* y *credentials* de AWS CLI para su uso desde VeraCrypt](#cambiar-la-ubicación-predeterminada-de-los-archivos-config-y-credentials-de-aws-cli-para-su-uso-desde-veracrypt)
-  - [Descripción de Funciones: Backup-AWS-S3.ps1](#descripción-de-funciones-backup-aws-s3ps1)
-    - [Set-USBDriveMount](#set-usbdrivemount)
-    - [Set-USBDriveUnmount](#set-usbdriveunmount)
-    - [Set-VeraCryptMount](#set-veracryptmount)
-    - [Set-VeraCryptUnmount](#set-veracryptunmount)
-    - [Compress-7ZipEncryption](#compress-7zipencryption)
-    - [Invoke-BackupAWSS3](#invoke-backupawss3)
-    - [Send-TelegramBotMessageAndDocument](#send-telegrambotmessageanddocument)
-    - [Send-EmailMessageAndDocument](#send-emailmessageanddocument)
-  - [Backup-AWS-S3-Trigger.bat](#backup-aws-s3-triggerbat)
-  - [USBDrive-MountUnmount](#usbdrive-mountunmount)
-    - [Invoke-USBDriveMountUnmount.ps1](#invoke-usbdrivemountunmountps1)
-    - [USBDrive-UnmountStartSystem.bat](#usbdrive-unmountstartsystembat)
-  - [Start-VeraCrypt-KPXC](#start-veracrypt-kpxc)
-    - [Start-VeraCrypt-KPXC.ps1](#start-veracrypt-kpxcps1)
-  - [PasswdBackup](#passwdbackup)
-    - [New-PasswdFile.ps1](#new-passwdfileps1)
-  - [Recuperación Backup: S3 a Local](#recuperación-backup-s3-a-local)
+- [Descripción](#descripción)
+- [Requisitos previos](#requisitos-previos)
+  - [Política de permisos en AWS S3](#política-de-permisos-en-aws-s3)
+  - [Identity and Access Management (IAM)](#identity-and-access-management-iam)
+  - [Configuración "Access Key" y "Secret Access key"](#configuración-access-key-y-secret-access-key)
+  - [Configuración de VeraCrypt para el uso de KeePassXC](#configuración-de-veracrypt-para-el-uso-de-keepassxc)
+  - [Cambiar la ubicación predeterminada de los archivos *config* y *credentials* de AWS CLI para su uso desde VeraCrypt](#cambiar-la-ubicación-predeterminada-de-los-archivos-config-y-credentials-de-aws-cli-para-su-uso-desde-veracrypt)
+- [Descripción de Funciones: Backup-AWS-S3.ps1](#descripción-de-funciones-backup-aws-s3ps1)
+  - [Set-USBDriveMount](#set-usbdrivemount)
+  - [Set-USBDriveUnmount](#set-usbdriveunmount)
+  - [Set-VeraCryptMount](#set-veracryptmount)
+  - [Set-VeraCryptUnmount](#set-veracryptunmount)
+  - [Compress-7ZipEncryption](#compress-7zipencryption)
+  - [Invoke-BackupAWSS3](#invoke-backupawss3)
+  - [Send-TelegramBotMessageAndDocument](#send-telegrambotmessageanddocument)
+  - [Send-EmailMessageAndDocument](#send-emailmessageanddocument)
+- [Backup-AWS-S3-Trigger.bat](#backup-aws-s3-triggerbat)
+- [USBDrive-MountUnmount](#usbdrive-mountunmount)
+  - [Invoke-USBDriveMountUnmount.ps1](#invoke-usbdrivemountunmountps1)
+  - [USBDrive-UnmountStartSystem.bat](#usbdrive-unmountstartsystembat)
+- [Start-VeraCrypt-KPXC](#start-veracrypt-kpxc)
+  - [Start-VeraCrypt-KPXC.ps1](#start-veracrypt-kpxcps1)
+- [PasswdBackup](#passwdbackup)
+  - [New-PasswdFile.ps1](#new-passwdfileps1)
+- [Recuperación Backup: S3 a Local](#recuperación-backup-s3-a-local)
 
 ## Descripción
 
@@ -56,7 +54,7 @@ Script en Powershell para automatizar el proceso de sincronización de datos loc
 ### Política de permisos en AWS S3
 
 > [!NOTE]
-> Por seguridad en la automatización de sincronización de este tipo de "backups" NO se recomienda usar un usuario raíz y con acceso a la consola de AWS.
+> Por seguridad en la automatización de sincronización de este tipo de backups NO se recomienda usar un usuario raíz y con acceso a la consola de AWS.
 
 Se creará un usuario específico para este fin únicamente con los permisos y accesos necesarios.
 
@@ -66,7 +64,7 @@ Se creará un usuario específico para este fin únicamente con los permisos y a
 - Solo se podrá conectar a través de su ID y clave de acceso, será la que se establezca en el archivo *%USERPROFILE%\\.aws\credentials*.
   - [Mejorar la seguridad local de acceso a estos ficheros](#cambiar-la-ubicación-predeterminada-de-los-archivos-config-y-credentials-de-aws-cli-para-su-uso-desde-veracrypt).
 
-![Credenciales sesion usuario aws](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/credenciales_sesion_usuario_aws.png)
+![Credenciales sesion usuario aws](../screenshots/credenciales_sesion_usuario_aws.png)
 
 2. Crear una nueva política donde solo se especifique:
 - Servicio: S3
@@ -387,21 +385,21 @@ Diferencias entre establecer **SendMessage** y **SendDocument**:
 ```ps
 Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendDocument
 ```
-![Envio Telegram Bot archivo backup log SendDocument](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendDocument.png)
+![Envio Telegram Bot archivo backup log SendDocument](../screenshots/envio_telegrambot_backup_log_powershell_sendDocument.png)
 
 - -SendMessage
 
 ```ps
 Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendMessage
 ```
-![Envio Telegram Bot archivo backup log SendMessage](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessage.png)
+![Envio Telegram Bot archivo backup log SendMessage](../screenshots/envio_telegrambot_backup_log_powershell_sendMessage.png)
 
 - -SendMessage y -SendDocument
 
 ```ps
 Send-TelegramBotMessageAndDocument -BotToken "XXXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" -ChatID "XXXXXXXXX" -SendMessage -SendDocument
 ```
-![Envio Telegram Bot archivo backup log SendMessage y SendDocument](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_telegrambot_backup_log_powershell_sendMessageDocument.png)
+![Envio Telegram Bot archivo backup log SendMessage y SendDocument](../screenshots/envio_telegrambot_backup_log_powershell_sendMessageDocument.png)
 
 ### Send-EmailMessageAndDocument
 
@@ -423,7 +421,7 @@ Esta función envía un correo del archivo de log adjunto y su contenido vía pr
 Send-EmailDocumentAndMessage -UserFromEmail "userFrom@outlook.es" -UserToEmail "userTo@gmail.com"
 ```
 
-![Envio Email Backup Log Outlook-Gmail](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Bucket-S3-Sync/master/screenshots/envio_email_backup_log_powershell.png)
+![Envio Email Backup Log Outlook-Gmail](../screenshots/envio_email_backup_log_powershell.png)
 
 ## Backup-AWS-S3-Trigger.bat
 

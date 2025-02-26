@@ -1,8 +1,22 @@
-# Backup AWS Bucket S3 Sync - Bash Shell Script
+<h1 align="center">Backup AWS Bucket S3 Sync - Bash Shell Script</h1>
 
 <div align="center">
   <img src="../screenshots/backup_aws_bucket_s3_sync_logo.png" width="350" />
 </div>
+
+<h1>Índice</h1>
+
+- [Descripción](#descripción)
+- [Requisitos previos](#requisitos-previos)
+    - [Política de permisos en AWS S3](#política-de-permisos-en-aws-s3)
+      - [Identity and Access Management (IAM)](#identity-and-access-management-iam)
+      - [Resumen de la política - JSON](#resumen-de-la-política---json)
+    - [Configuración "Access Key" y "Secret Access key" para usar aws-cli](#configuración-access-key-y-secret-access-key-para-usar-aws-cli)
+      - [Backup-AWS-S3.sh: establecer los valores deseados en las variables.les.](#backup-aws-s3sh-establecer-los-valores-deseados-en-las-variablesles)
+  - [Instalación y configuración de SSMTP para el envío de emails usando el comando maill](#instalación-y-configuración-de-ssmtp-para-el-envío-de-emails-usando-el-comando-maill)
+    - [Desactivar el envío de alertas de correo de cron](#desactivar-el-envío-de-alertas-de-correo-de-cron)
+    - [Envío log cuenta Gmail (Google)](#envío-log-cuenta-gmail-google)
+- [Recuperación Backup: S3 a Local](#recuperación-backup-s3-a-local)
 
 ## Descripción
 
@@ -15,18 +29,20 @@ Script en Bash para automatizar el proceso de sincronización de datos locales a
 ▶ Enviar el fichero de log vía Email desde el smtp de una cuenta de correo Gmail configurado en SSMTP.
 
 ## Requisitos previos
+
 ### Política de permisos en AWS S3  
 
-> Por seguridad en la automatización de este tipo de backups NO se recomienda usar un usuario raíz y con acceso a la consola de AWS.
-
 Se creará un usuario específico para este fin únicamente con los permisos y accesos necesarios.
+
+> [!NOTE]
+> Por seguridad en la automatización de sincronización de este tipo de backups NO se recomienda usar un usuario raíz y con acceso a la consola de AWS.
 
 #### Identity and Access Management (IAM)
 1. Crear un nuevo usuario con las siguientes condiciones:
 - Sin ningún tipo de privilegio administrativo, tampoco podrá iniciar sesión en la consola de administración de AWS.
 - Solo se podrá conectar a través de su ID y clave de acceso (será la que se establezca posteriormente en el fichero %userprofile%\.aws\credentials).
 
-![Credenciales sesion usuario aws](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3/master/screenshots/credenciales_sesion_usuario_aws.png)
+![Credenciales sesion usuario aws](../screenshots/credenciales_sesion_usuario_aws.png)
 
 2. Crear una nueva política donde solo se especifique:
 - Servicio: S3
@@ -70,7 +86,7 @@ Default region name [None]: eu-south-2
 Default output format [None]: json
 ```
 
-#### **Backup-AWS-S3.sh**: establecer los valores deseados en las variables.
+#### Backup-AWS-S3.sh: establecer los valores deseados en las variables.les.
 
 - pathLocalDatos="/pathLocal/datos/"
 - pathRemotoBucketS3="s3://bucketS3/backup/"
@@ -92,7 +108,7 @@ Podemos elegir entre enviar el fichero de log adjunto o adjuntar el contenido de
 
 - Ayuda comando aws s3 sync: https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html
 
- ## Instalación y configuración de SSMTP para el envío de emails usando el comando mail
+## Instalación y configuración de SSMTP para el envío de emails usando el comando maill
  
 **Instalar ssmtp sendmail y mailutils**
 ```
@@ -126,7 +142,7 @@ Envía un correo del fichero de log adjunto y su contenido vía protocolo SMTP d
 
 > Por seguridad Gmail ya no permite esta opción. https://support.google.com/accounts/answer/6010255
 
-![Envio Email Log](https://raw.githubusercontent.com/adrianlois/Backup-AWS-Sync-Bucket-S3-Bash-PowerShell/master/screenshots/envio_email_backup_log_gmail_powershell.png)
+![Envio Email Log](../screenshots/envio_email_backup_log_powershell.png)
 
 # Recuperación Backup: S3 a Local
 
