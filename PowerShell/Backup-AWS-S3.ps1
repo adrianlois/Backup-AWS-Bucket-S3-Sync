@@ -237,8 +237,9 @@ J:\PATH_4\Musica
 
     # Mostrar fecha y hora del comienzo del proceso de backup al princpio del log.
     $StartTime = (Get-Date)
+    Function Add-SeparatorLine { Write-Output "——————————————————————————————————————`n" | Out-File -FilePath $BackupLog -Append -Encoding UTF8 }
     Write-Output "Backup comienza: $CurrentDateTime" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
-    Write-Output "___________________________________`n" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
+    Add-SeparatorLine
 
     # Sincronizar datos locales al bucket S3. Importar e iterar las líneas con los paths locales establecidos en el fichero PathLocalData.txt.
     $TXTPathLines | Foreach-Object {
@@ -258,7 +259,7 @@ J:\PATH_4\Musica
         }
     }
 
-    Write-Output "___________________________________" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
+    Add-SeparatorLine
     $EndTime = (Get-Date)
     $ElapsedTime = $($EndTime-$StartTime).ToString().SubString(0,8)
     # Resetear $CurrentDateTime para obtener la hora actual hasta este momento del proceso de backup.
