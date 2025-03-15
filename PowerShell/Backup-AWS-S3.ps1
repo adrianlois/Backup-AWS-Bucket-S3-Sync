@@ -206,12 +206,12 @@ Function Invoke-BackupAWSS3 {
     )
 
     # Fecha y hora.
-    $CurrentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
+    $CurrentDateTime = Get-Date -Format "dd/MM/yyyy - HH:mm:ss"
     # $BackupLog variable en ámbito de script del fichero de log con fecha actual que también será usada en Send-EmailMessageAndFile y Send-TelegramLocalFile.
     if (-not $WorkPath.EndsWith('\')) {
         $WorkPath += '\'
     }
-    $script:BackupLog = $WorkPath + "Backup_" + (Get-Date -uformat "%d-%m-%Y") + ".log"
+    $script:BackupLog = $WorkPath + "Backup_" + (Get-Date -Format "dd/MM/yyyy") + ".log"
     $BackupLog = $script:BackupLog
 
     # Comprobar y eliminar si existe un fichero de log anterior.
@@ -238,7 +238,7 @@ J:\PATH_4\Musica
     # Mostrar fecha y hora del comienzo del proceso de backup al princpio del log.
     $StartTime = (Get-Date)
     Write-Output "Backup comienza: $CurrentDateTime" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
-    Write-Output "——————————————————————————————————————`n" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
+    Write-Output "--------------------------------------`n" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
 
     # Sincronizar datos locales al bucket S3. Importar e iterar las líneas con los paths locales establecidos en el fichero PathLocalData.txt.
     $TXTPathLines | Foreach-Object {
@@ -258,12 +258,12 @@ J:\PATH_4\Musica
         }
     }
 
-    Write-Output "——————————————————————————————————————" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
+    Write-Output "--------------------------------------" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
     $EndTime = (Get-Date)
     $ElapsedTime = $($EndTime-$StartTime).ToString().SubString(0,8)
     # Resetear $CurrentDateTime para obtener la hora actual hasta este momento del proceso de backup.
     # Establecer $CurrentDateTime en este punto como variable de ámbito de script que también será usada en Send-EmailMessageAndFile.
-    $CurrentDateTime = Get-Date -uformat "%d/%m/%Y - %H:%M:%S"
+    $CurrentDateTime = Get-Date -Format "dd/MM/yyyy - HH:mm:ss"
     Write-Output "Backup finaliza: $CurrentDateTime`n" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
     Write-Output "Tiempo total transcurrido: $ElapsedTime" | Out-File -FilePath $BackupLog -Append -Encoding UTF8
 }
