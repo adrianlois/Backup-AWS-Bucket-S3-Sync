@@ -211,7 +211,7 @@ Function Invoke-BackupAWSS3 {
     if (-not $WorkPath.EndsWith('\')) {
         $WorkPath += '\'
     }
-    $script:BackupLog = $WorkPath + "Backup_" + (Get-Date -Format "dd/MM/yyyy") + ".log"
+    $script:BackupLog = $WorkPath + "Backup_" + (Get-Date -Format "dd-MM-yyyy") + ".log"
     $BackupLog = $script:BackupLog
 
     # Comprobar y eliminar si existe un fichero de log anterior.
